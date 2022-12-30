@@ -1,0 +1,14 @@
+{
+  "name": "Nerd Startpage",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "description": "Lightweight and fast new tab page extension",
+  "permissions": [
+    "https://suggestqueries.google.com/complete/search",
+    "tabs"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'",
+  "chrome_url_overrides": {
+    "newtab": "load.html"
+  }
+}
