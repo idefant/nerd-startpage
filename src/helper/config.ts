@@ -1,22 +1,36 @@
 import jsyaml from 'js-yaml';
 import Swal from 'sweetalert2';
+import { ValidationError } from 'yup';
+import { configSchema } from '../schema';
 import store from '../store';
-import { TConfig } from '../types';
 import { fetchConfig } from './requests';
 
 const config = store.config;
 
-export const reloadConfig = async () => {
+const parseYamlConfig = (configText: string) => {
   try {
-    const newConfigYaml = await fetchConfig();
-    if (!newConfigYaml) return;
-    config.data = jsyaml.load(newConfigYaml) as TConfig;
-  } catch (e) {
+    return jsyaml.load(configText);
+  } catch {
     Swal.fire({
       title: 'An error occurred while parsing the config',
       icon: 'error',
     });
   }
+};
+
+export const reloadConfig = async () => {
+  const newConfigText = await fetchConfig();
+  if (!newConfigText) return;
+
+  configSchema
+    .validate(parseYamlConfig(newConfigText))
+    .then((data) => {
+      config.data = data;
+      Swal.fire({ title: 'Data has been successfully updated', icon: 'success' });
+    })
+    .catch((e: ValidationError) => {
+      Swal.fire({ title: 'Config does not match the scheme', text: e.message, icon: 'error' });
+    });
 };
 
 export const openConfigPopup = () => {
