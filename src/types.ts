@@ -10,9 +10,11 @@ export type TLink = {
 };
 
 export type TConfig = {
-  gap: number;
-  colWidth: number;
   hotkeyLeader: string;
+  columns: {
+    gap: number;
+    width: number;
+  };
   mappings: {
     suggestionNext: string;
     suggestionPrev: string;

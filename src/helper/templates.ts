@@ -19,7 +19,7 @@ const linkTemplate = (link: TLink) =>
   </a>`;
 
 export const categoryTemplate = (category: TCategory) =>
-  `<div class="category" style="width:${config.data.colWidth}px">
+  `<div class="category" style="width:${config.data.columns.width}px">
     <div class="category__name">${category.name}</div>
     <div class="links">${listTemplate(linkTemplate, category.links)}</div>
   </div>`;

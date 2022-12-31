@@ -1,8 +1,10 @@
 declare module '*config.yaml' {
   const data: {
-    gap: number;
-    colWidth: number;
     hotkeyLeader: string;
+    columns: {
+      gap: number;
+      width: number;
+    };
     mappings: {
       suggestionNext: string;
       suggestionPrev: string;

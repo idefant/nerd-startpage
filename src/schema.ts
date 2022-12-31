@@ -1,9 +1,11 @@
 import { array, number, object, string } from 'yup';
 
 export const configSchema = object({
-  gap: number().positive().default(20),
-  colWidth: number().positive().default(200),
   hotkeyLeader: string().default(':'),
+  columns: object({
+    gap: number().positive().default(20),
+    width: number().positive().default(200),
+  }),
   mappings: object({
     suggestionNext: string().default('ctrl+j, alt+j, ArrowDown'),
     suggestionPrev: string().default('ctrl+k, alt+k, ArrowUp'),
