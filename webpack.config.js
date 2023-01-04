@@ -6,6 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
   entry: {
     main: path.resolve(__dirname, 'src', 'main.ts'),
@@ -63,6 +65,15 @@ module.exports = {
           from: '**/*',
           context: path.resolve(__dirname, 'public'),
           to: './',
+        },
+      ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: isProd ? 'manifest.prod.json' : 'manifest.dev.json',
+          context: path.resolve(__dirname),
+          to: './manifest.json',
         },
       ],
     }),
