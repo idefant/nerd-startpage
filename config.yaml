@@ -3,6 +3,7 @@ hotkeyLeader: ':'
 columns:
   gap: 20
   width: 200
+  maxCount: 6
 
 mappings:
   suggestionNext: 'ctrl+j, alt+j, ArrowDown'

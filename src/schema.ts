@@ -5,6 +5,7 @@ export const configSchema = object({
   columns: object({
     gap: number().positive().default(20),
     width: number().positive().default(200),
+    maxCount: number().positive().default(6),
   }),
   mappings: object({
     suggestionNext: string().default('ctrl+j, alt+j, ArrowDown'),

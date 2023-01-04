@@ -14,6 +14,7 @@ export type TConfig = {
   columns: {
     gap: number;
     width: number;
+    maxCount: number;
   };
   mappings: {
     suggestionNext: string;

@@ -22,7 +22,7 @@ export const reloadConfig = async () => {
   const newConfigText = await fetchConfig();
   if (!newConfigText) return;
 
-  configSchema
+  await configSchema
     .validate(parseYamlConfig(newConfigText))
     .then((data) => {
       config.data = data;

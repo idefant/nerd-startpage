@@ -4,6 +4,7 @@ declare module '*config.yaml' {
     columns: {
       gap: number;
       width: number;
+      maxCount: number;
     };
     mappings: {
       suggestionNext: string;

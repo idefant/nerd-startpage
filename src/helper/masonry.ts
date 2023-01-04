@@ -5,9 +5,12 @@ const config = store.config;
 
 export const createMasonry = () => {
   const containerWidth = $.container.offsetWidth || 0;
-  const colsCount = Math.floor(
-    (containerWidth + config.data.columns.gap) /
-      (config.data.columns.width + config.data.columns.gap)
+  const colsCount = Math.min(
+    Math.floor(
+      (containerWidth + config.data.columns.gap) /
+        (config.data.columns.width + config.data.columns.gap)
+    ),
+    config.data.columns.maxCount
   );
   const colsHeight = [...Array(colsCount)].map(() => 0);
 
