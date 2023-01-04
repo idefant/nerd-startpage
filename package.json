@@ -1,11 +1,11 @@
 {
   "name": "nerd-startpage",
+  "displayName": "Nerd Startpage",
   "version": "0.1.0",
-  "description": "",
   "private": true,
   "scripts": {
-    "serve": "webpack serve --mode=development",
-    "build": "webpack --mode=production"
+    "dev": "webpack serve --mode=development",
+    "build": "webpack --mode=production & web-ext build -s dist"
   },
   "author": "idefant",
   "license": "MIT",
