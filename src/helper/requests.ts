@@ -5,17 +5,10 @@ import store from '../store';
 const config = store.config;
 
 export const fetchSuggestions = async (searchValue: string): Promise<string[] | undefined> => {
-  try {
-    const res = await axios('https://suggestqueries.google.com/complete/search', {
-      params: { client: 'chrome', q: searchValue },
-    });
-    return res.data[1];
-  } catch (e) {
-    Swal.fire({
-      title: isAxiosError(e) ? e.message : 'An error occurred during the request',
-      icon: 'error',
-    });
-  }
+  const res = await axios('https://suggestqueries.google.com/complete/search', {
+    params: { client: 'chrome', q: searchValue },
+  });
+  return res.data[1];
 };
 
 export const fetchConfig = async (): Promise<string | undefined> => {
