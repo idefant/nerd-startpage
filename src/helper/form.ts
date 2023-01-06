@@ -47,12 +47,14 @@ export const handleInput = async () => {
 
 export const search = (q = $.input.value) => {
   store.form.value = $.input.value;
-  try {
-    const url = new URL(q);
-    window.location.href = url.href;
-  } catch {
-    window.location.href = `https://www.google.com/search?q=${q}`;
-  } finally {
-    unsetSuggestions();
+  const regexp =
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+
+  if (regexp.test(q)) {
+    window.location.href = q;
+  } else {
+    const urlParams = new URLSearchParams({ q });
+    window.location.href = `https://www.google.com/search?${urlParams}`;
   }
+  unsetSuggestions();
 };
