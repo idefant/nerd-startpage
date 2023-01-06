@@ -1,7 +1,7 @@
 {
   "name": "nerd-startpage",
   "displayName": "Nerd Startpage",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --mode=development",
