@@ -20,7 +20,6 @@
     "css-minimizer-webpack-plugin": "^4.2.2",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.2",
-    "node-sass": "^8.0.0",
     "prettier": "^2.8.1",
     "sass-loader": "^13.2.0",
     "terser-webpack-plugin": "^5.3.6",
@@ -37,6 +36,7 @@
     "axios": "^1.2.1",
     "js-yaml": "^4.1.0",
     "normalize.css": "^8.0.1",
+    "sass": "^1.58.0",
     "sweetalert2": "^11.6.16",
     "yup": "^0.32.11"
   }
