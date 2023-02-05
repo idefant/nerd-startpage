@@ -7,8 +7,11 @@ declare module '*config.yaml' {
       maxCount: number;
     };
     mappings: {
-      suggestionNext: string;
-      suggestionPrev: string;
+      suggestionNext: string[];
+      suggestionPrev: string[];
+      showSearch: string[];
+      showHistory: string[];
+      showBookmarks: string[];
     };
     categories: {
       name: string;

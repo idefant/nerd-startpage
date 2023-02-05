@@ -7,6 +7,8 @@ import { createMasonry } from './helper/masonry';
 import store from './store';
 import { addSuggestionsEventListeners } from './helper/suggestions';
 import { handleInput, handleSubmit } from './helper/form';
+import { hotkey } from './helper/hotkey';
+import { TSuggestionsMode } from './types';
 
 const config = store.config;
 
@@ -18,6 +20,19 @@ $.settingButton.addEventListener('click', openConfigPopup);
 
 $.input.addEventListener('blur', removeFilter);
 $.input.addEventListener('focus', () => store.form.value && addFilter());
+
+const changeMode = (mode: TSuggestionsMode) => {
+  if (store.suggestions.mode === mode) return;
+
+  $.input.value = store.form.value;
+  store.suggestions.mode = mode;
+  document.body.dataset.mode = mode;
+  handleInput();
+};
+
+hotkey(config.data.mappings.showSearch, () => changeMode('search'));
+hotkey(config.data.mappings.showHistory, () => changeMode('history'));
+hotkey(config.data.mappings.showBookmarks, () => changeMode('bookmarks'));
 
 const init = () => {
   addSuggestionsEventListeners();

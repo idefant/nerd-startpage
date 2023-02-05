@@ -17,8 +17,11 @@ export type TConfig = {
     maxCount: number;
   };
   mappings: {
-    suggestionNext: string;
-    suggestionPrev: string;
+    suggestionNext: string[];
+    suggestionPrev: string[];
+    showSearch: string[];
+    showHistory: string[];
+    showBookmarks: string[];
   };
   categories: TCategory[];
 };
@@ -31,3 +34,7 @@ export type TKeyDetails = {
   alt: boolean;
   key: string | null;
 };
+
+export type TSuggestionsMode = 'search' | 'history' | 'bookmarks';
+
+export type TVisitedSuggestion = { title?: string; url?: string };

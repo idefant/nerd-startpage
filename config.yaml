@@ -6,8 +6,11 @@ columns:
   maxCount: 6
 
 mappings:
-  suggestionNext: 'ctrl+j, alt+j, ArrowDown'
-  suggestionPrev: 'ctrl+k, alt+k, ArrowUp'
+  suggestionNext: ['ctrl+j', 'ArrowDown']
+  suggestionPrev: ['ctrl+k', 'ArrowUp']
+  showSearch: ['ctrl+s']
+  showHistory: ['ctrl+h']
+  showBookmarks: ['ctrl+b']
 
 categories:
   - name: About_Project

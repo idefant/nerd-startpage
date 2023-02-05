@@ -8,8 +8,11 @@ export const configSchema = object({
     maxCount: number().positive().default(6),
   }),
   mappings: object({
-    suggestionNext: string().default('ctrl+j, alt+j, ArrowDown'),
-    suggestionPrev: string().default('ctrl+k, alt+k, ArrowUp'),
+    suggestionNext: array(string().required()).default(['ctrl+j', 'ArrowDown']),
+    suggestionPrev: array(string().required()).default(['ctrl+k', 'ArrowUp']),
+    showSearch: array(string().required()).default(['ctrl+s']),
+    showHistory: array(string().required()).default(['ctrl+h']),
+    showBookmarks: array(string().required()).default(['ctrl+b']),
   }),
   categories: array(
     object({

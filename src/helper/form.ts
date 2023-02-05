@@ -2,9 +2,14 @@ import $ from './domElements';
 import { removeFilter, addFilter } from './filter';
 import { fixUrl } from './url';
 import { getHotkey, getLinkByHotkey } from './hotkey';
-import { fetchSuggestions } from './requests';
 import store from '../store';
-import { unsetSuggestions, setSuggestions } from './suggestions';
+import {
+  unsetSuggestions,
+  setSearchSuggestions,
+  setHistorySuggestions,
+  setBookmarkSuggestions,
+} from './suggestions';
+import { TVisitedSuggestion } from '../types';
 
 const config = store.config;
 
@@ -21,7 +26,21 @@ export const handleSubmit = (e: SubmitEvent) => {
     return;
   }
 
-  search();
+  const suggestionsMode = store.suggestions.mode;
+
+  if (suggestionsMode === 'search') {
+    search();
+    return;
+  }
+
+  const suggestions = store.suggestions.list[suggestionsMode] as TVisitedSuggestion[];
+  const index = store.suggestions.activeIndex;
+  const suggestion = suggestions[index];
+  if (suggestion.url) {
+    window.location.href = suggestion.url;
+  } else {
+    search(suggestion.title);
+  }
 };
 
 export const handleInput = async () => {
@@ -40,9 +59,12 @@ export const handleInput = async () => {
     return;
   }
 
-  const suggestions = await fetchSuggestions(store.form.value);
-  if (!suggestions) return;
-  setSuggestions(suggestions);
+  const suggestionActions = {
+    search: setSearchSuggestions,
+    history: setHistorySuggestions,
+    bookmarks: setBookmarkSuggestions,
+  };
+  suggestionActions[store.suggestions.mode]();
 };
 
 export const search = (q = $.input.value) => {

@@ -1,9 +1,22 @@
+import { TVisitedSuggestion, TSuggestionsMode } from '../types';
+
+type TSuggestionLists = {
+  search: string[];
+  history: TVisitedSuggestion[];
+  bookmarks: TVisitedSuggestion[];
+};
+
 class SuggestionsStore {
   activeIndex = -1;
-  list: string[] = [];
+  mode: TSuggestionsMode = 'search';
+  list: TSuggestionLists = {
+    search: [],
+    history: [],
+    bookmarks: [],
+  };
 
   get active() {
-    return this.list[this.activeIndex];
+    return this.list[this.mode][this.activeIndex];
   }
 
   resetActiveIndex() {
@@ -11,10 +24,10 @@ class SuggestionsStore {
   }
 
   move(direction: -1 | 1) {
-    let newIndex =
-      ((this.activeIndex + direction + 1) % (this.list.length + 1)) - 1;
+    const suggestionsCount = this.list[this.mode].length;
+    let newIndex = ((this.activeIndex + direction + 1) % (suggestionsCount + 1)) - 1;
     if (newIndex < -1) {
-      newIndex += this.list.length + 1;
+      newIndex += suggestionsCount + 1;
     }
     this.activeIndex = newIndex;
     return newIndex;

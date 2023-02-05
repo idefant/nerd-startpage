@@ -52,6 +52,24 @@ body {
   padding: 7px 12px;
   cursor: pointer;
 
+  &-visited {
+    &__title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    &__url {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0.5;
+      font-size: 13px;
+    }
+  }
+
   &:last-child {
     border-bottom: 3px solid $main-color;
   }
@@ -75,6 +93,19 @@ body {
     display: block;
   }
 
+  &-icon {
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    padding: 13px 14px;
+    pointer-events: none;
+
+    svg {
+      display: none;
+      width: 26px;
+    }
+  }
+
   &__line {
     position: relative;
     z-index: 1;
@@ -83,8 +114,29 @@ body {
     font-size: 19px;
     background-color: #222;
     outline: none;
-    padding: 10px;
+    padding: 10px 10px 10px 52px;
     box-sizing: border-box;
+  }
+}
+
+body[data-mode='search'] {
+  .search-icon__search {
+    display: block;
+  }
+}
+
+body[data-mode='bookmarks'] {
+  .search-icon__bookmarks {
+    display: block;
+  }
+}
+
+body[data-mode='history'] {
+  .search-icon__history {
+    display: block;
+    fill: $main-color;
+    width: 22px;
+    margin: 0 2px 2px;
   }
 }
 

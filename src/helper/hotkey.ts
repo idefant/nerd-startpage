@@ -6,32 +6,34 @@ const config = store.config;
 class Hotkey {
   keysDetail: TKeyDetails[];
 
-  constructor(hotkeysText: string) {
+  constructor(hotkeysText: string[]) {
     this.keysDetail = this.parseKeysText(hotkeysText);
   }
 
-  parseKeysText(hotkeysText: string) {
-    const hotkeysList = hotkeysText.toLowerCase().replaceAll(' ', '').split(',');
+  parseKeysText(hotkeysList: string[]) {
+    return hotkeysList.map((hotkey) =>
+      hotkey
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .split('+')
+        .reduce(
+          (acc: TKeyDetails, hotkeyPart) => {
+            const actions: Record<TAdditionalKeys, () => void> = {
+              ctrl: () => (acc.ctrl = true),
+              shift: () => (acc.shift = true),
+              alt: () => (acc.alt = true),
+            };
 
-    return hotkeysList.map((key) =>
-      key.split('+').reduce(
-        (acc: TKeyDetails, hotkeyPart) => {
-          const actions: Record<TAdditionalKeys, () => void> = {
-            ctrl: () => (acc.ctrl = true),
-            shift: () => (acc.shift = true),
-            alt: () => (acc.alt = true),
-          };
+            if (hotkeyPart in actions) {
+              actions[hotkeyPart as TAdditionalKeys]();
+            } else {
+              acc.key = hotkeyPart;
+            }
 
-          if (hotkeyPart in actions) {
-            actions[hotkeyPart as TAdditionalKeys]();
-          } else {
-            acc.key = hotkeyPart;
-          }
-
-          return acc;
-        },
-        { ctrl: false, shift: false, alt: false, key: '' }
-      )
+            return acc;
+          },
+          { ctrl: false, shift: false, alt: false, key: '' }
+        )
     );
   }
 
@@ -47,16 +49,16 @@ class Hotkey {
 }
 
 export const hotkey = (
-  hotkeysStr: string,
+  hotkeysStrList: string[],
   callback: () => void,
-  params: { elem?: Element | null; preventDefault?: boolean }
+  params?: { elem?: Element | null; preventDefault?: boolean }
 ) => {
-  const elem = params.elem || window;
-  const hotkey = new Hotkey(hotkeysStr);
+  const elem = params?.elem || window;
+  const hotkey = new Hotkey(hotkeysStrList);
   const listener = (e: Event) => {
     if (hotkey.compareWithEvent(e as KeyboardEvent)) {
       callback();
-      if (params.preventDefault ?? true) {
+      if (params?.preventDefault ?? true) {
         e.preventDefault();
       }
     }
