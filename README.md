@@ -1,41 +1,54 @@
-# Nerd Startpage
+# React + TypeScript + Vite
 
-Nerd Startpage is designed to organize frequently used links in one place.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- Lightweight and fast
-- Categories in the style of masonry
-- Suggestions
-- Easy configuration file
-- Using Shortcuts
-- Minimalistic
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Preview
+## Expanding the ESLint configuration
 
-![Preview](.github/preview.png?raw=true)
-![Searching Preview](.github/searching.png?raw=true)
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## Usage
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-1. Download [config file](config.yaml)
-2. Edit this file
-3. Create your own github repo and upload your config
-4. Get link to uploaded config (For example: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
-5. Download extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/nerd-startpage/)
-6. Open new tab
-7. Click on the settings icon
-8. Enter the link you received in step 4
-9. Click on the reload icon
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## Shortcuts
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-You can use shortcuts by adding a colon to the beginning. For example, by typing `:gh` and pressing `Enter` you can open project's Github repository. The list of links can be changed in the file `config.yaml`:
-
-## Production
-
-Build extension using `npm run build` command. Then go to <https://addons.mozilla.org/en-US/developers/> and sign the extension
-
-## Development
-
-Start extension using `npm run dev` command. Then open <about:debugging#/runtime/this-firefox> and load the addon by clicking "Load Temporary Add-on"
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```
