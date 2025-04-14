@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
+    "firefox": "web-ext run --source-dir=dist --firefox=firefox",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint -c .eslintrc.json --ext .js,.jsx,.ts,.tsx src",
@@ -31,9 +32,11 @@
     "@storybook/react": "^8.6.12",
     "@storybook/react-vite": "^8.6.12",
     "@storybook/test": "^8.6.12",
+    "@types/firefox-webext-browser": "^120.0.4",
     "@types/node": "^22.14.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/webextension-polyfill": "^0.12.3",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "@vitejs/plugin-react": "^4.3.4",
@@ -58,6 +61,8 @@
     "typescript": "^5.8.3",
     "vite": "^6.2.0",
     "vite-plugin-checker": "^0.9.1",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-plugin-svgr": "^4.3.0",
+    "web-ext": "^8.5.0",
+    "webextension-polyfill": "^0.12.0"
   }
 }

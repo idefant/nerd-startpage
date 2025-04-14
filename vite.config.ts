@@ -1,25 +1,31 @@
 import path from 'path';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 
-// https://vite.dev/config/
 export default defineConfig({
   server: {
     open: true,
-    // port,
-    // proxy: {
-    //   '/api': {
-    //     target: apiUrl,
-    //     changeOrigin: true,
-    //   },
-    // },
   },
-  // envDir,
   build: {
     sourcemap: 'hidden',
+    rollupOptions: {
+      input: {
+        index: path.resolve(__dirname, 'index.html'),
+        load: path.resolve(__dirname, 'load.html'),
+        background: path.resolve(__dirname, 'src/background.ts'),
+      },
+      output: {
+        entryFileNames: (chunk) => {
+          if (chunk.name === 'background') return 'background.js';
+          return '[name].js';
+        },
+      },
+    },
+    outDir: 'dist',
+    emptyOutDir: true,
   },
   resolve: {
     alias: {

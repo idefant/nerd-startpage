@@ -1,0 +1,25 @@
+{
+  "name": "Nerd Startpage",
+  "version": "0.2.0",
+  "manifest_version": 3,
+  "description": "Lightweight and fast new tab page extension",
+  "permissions": ["tabs", "history", "bookmarks"],
+  "host_permissions": ["https://suggestqueries.google.com/complete/search"],
+  "action": {
+    "default_title": "Nerd Startpage"
+  },
+  "chrome_url_overrides": {
+    "newtab": "load.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "commands": {
+    "open_startpage": {
+      "suggested_key": {
+        "default": "Alt+T"
+      },
+      "description": "Open Nerd Startpage"
+    }
+  }
+}
