@@ -1,0 +1,43 @@
+.card {
+  border: 3px solid var(--primary-color);
+  background-color: var(--bg-paper);
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+.name {
+  padding: 10px 14px;
+  border-bottom: 3px solid var(--primary-color);
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.links {
+  padding: 10px 7px;
+}
+
+.link {
+  color: var(--primary-color);
+  display: block;
+  text-decoration: none;
+  padding: 2px 7px;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  &:hover {
+    background-color: #444;
+  }
+
+  &Icon {
+    display: inline-block;
+    width: 21px;
+    text-align: center;
+    margin-right: 8px;
+  }
+}
