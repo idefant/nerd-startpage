@@ -2,6 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { toast } from 'react-toastify';
 import YAML from 'yaml';
 
+import { configSchema } from '#schema/configSchema';
+
 export const mainApi = createApi({
   reducerPath: 'api/main',
   baseQuery: fetchBaseQuery({}),
@@ -15,9 +17,15 @@ export const mainApi = createApi({
 
           const text = await response.text();
           try {
-            const res = YAML.parse(text);
+            const parsedConfig = YAML.parse(text);
+            const validationResult = await configSchema.safeParseAsync(parsedConfig);
+            if (validationResult.error) {
+              toast.error('Ошибка в конфигурации. Смотри в консоль');
+              console.log(validationResult.error);
+              return;
+            }
             toast.success('Конфигурация успешно обновлена');
-            return { data: res };
+            return validationResult.data;
           } catch {
             const message = 'Не удалось распарсить конфигурацию';
             toast.error(message);

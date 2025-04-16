@@ -21,7 +21,6 @@
     "@reduxjs/toolkit": "^2.6.1",
     "classnames": "^2.5.1",
     "merge-refs": "^2.0.0",
-    "mitt": "^3.0.1",
     "modern-normalize": "^3.0.1",
     "nanoid": "^5.1.5",
     "react": "^19.0.0",

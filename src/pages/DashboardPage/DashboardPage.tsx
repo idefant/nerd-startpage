@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import mergeRefs from 'merge-refs';
-import mitt from 'mitt';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
@@ -14,7 +13,9 @@ import { useHistorySuggestions } from '#hooks/useHistorySuggestions';
 import { useSessionSuggestions } from '#hooks/useSessionSuggestions';
 import { useYandexSuggestions } from '#hooks/useYandexSuggestions';
 import { setConfigUrl } from '#store/reducers/configSlice';
-import { Suggestion } from '#types/suggestionType';
+import { FilterWithIsMode, ToTuple } from '#types/basicType';
+import { modeList } from '#types/modeType';
+import { Suggestion, SuggestionActionEvent } from '#types/suggestionType';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
 import { getGoogleSearchUrl, getYandexSearchUrl } from '#utils/getSearchEngineUrl';
 import { getTextFromClipboard } from '#utils/getTextFromClipboard';
@@ -24,11 +25,7 @@ import { openUrl } from '#utils/openUrl';
 import cls from './DashboardPage.module.scss';
 
 const commandKeys = [
-  'searchOnGoogle',
-  'searchOnYandex',
-  'searchInHistory',
-  'searchInBookmarks',
-  'searchInSessions',
+  ...modeList,
   'clearInput',
   'openLinkFromClipboard',
   'openGoogle',
@@ -39,12 +36,9 @@ const commandKeys = [
   'showConfig',
   'reloadConfig',
   'setConfigUrlFromClipboard',
-  'commandPalette',
 ] as const;
 
 type CommandKey = (typeof commandKeys)[number];
-
-const emitter = mitt<Record<CommandKey, undefined>>();
 
 type Command2 = {
   title: string;
@@ -68,11 +62,7 @@ type Command2 = {
         }
       | {
           url?: undefined;
-          onAction: (
-            e?:
-              | React.KeyboardEvent<HTMLInputElement>
-              | React.MouseEvent<HTMLButtonElement, MouseEvent>,
-          ) => void;
+          onAction: (e?: SuggestionActionEvent) => void;
           other?: undefined;
         }
       | {
@@ -83,9 +73,6 @@ type Command2 = {
     ))
 );
 
-// XXX: Перенести во внутрь компонента
-//      или использовать PubSub
-//      или может вообще не писать onAction и сделать как в ClearInput
 const commandsMap = {
   searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+f', isMode: true, icon: '' },
   searchOnYandex: { title: 'Search on Yandex', hotkey: 'ctrl+y', isMode: true, icon: '' },
@@ -136,8 +123,8 @@ const commandsMap = {
       openUrl(getYandexSearchUrl(query));
     },
   },
-  editConfig: { title: 'Edit config', url: 'https://your-config-url.com' },
-  showConfig: { title: 'Show config', url: 'https://your-config-url.com' },
+  editConfig: { title: 'Edit config', other: true },
+  showConfig: { title: 'Show config', other: true },
   reloadConfig: {
     title: 'Reload config',
     other: true,
@@ -148,15 +135,7 @@ const commandsMap = {
   },
 } satisfies Record<CommandKey, Command2>;
 
-type FilterWithIsMode<T> = {
-  [K in keyof T as T[K] extends { isMode: any } ? K : never]: T[K];
-};
-
 type Mode = keyof FilterWithIsMode<typeof commandsMap>;
-
-type ToTuple<K extends readonly string[], T> = {
-  [I in keyof K]: K[I] extends keyof T ? { key: K[I] } & T[K[I]] : never;
-};
 
 type Commands = ToTuple<typeof commandKeys, typeof commandsMap>;
 
@@ -174,7 +153,7 @@ export const DashboardPage: FC = () => {
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useAppDispatch();
-  const { configUrl } = useAppSelector((state) => state.config);
+  const { configUrl, config } = useAppSelector((state) => state.config);
 
   const [reloadConfig] = useLazyFetchConfigQuery();
 
@@ -196,6 +175,47 @@ export const DashboardPage: FC = () => {
     activeElem?.scrollIntoView({ block: 'nearest' });
   }, [activeSuggestionIndex]);
 
+  const handleShowConfig = useCallback(
+    (e?: SuggestionActionEvent) => {
+      if (!configUrl) {
+        toast.error('Config URL is empty');
+        return;
+      }
+      openUrl(configUrl, e?.ctrlKey);
+    },
+    [configUrl],
+  );
+
+  const handleEditConfig = useCallback(
+    (e?: SuggestionActionEvent) => {
+      if (config?.editConfigUrl) {
+        openUrl(config.editConfigUrl, e?.ctrlKey);
+        return;
+      }
+      handleShowConfig(e);
+    },
+    [config?.editConfigUrl, handleShowConfig],
+  );
+
+  const handleReloadConfig = useCallback(() => {
+    if (!configUrl) {
+      toast.error('Config URL is empty');
+      return;
+    }
+    reloadConfig({ configUrl });
+  }, [configUrl, reloadConfig]);
+
+  const handleSetConfigUrlFromClipboard = useCallback(async () => {
+    const url = await getTextFromClipboard();
+    if (!url) return;
+    if (!checkIsValidUrl(url)) {
+      toast.error('Config URL from clipboard is invalid');
+      return;
+    }
+    toast.success('Config URL was successfully added');
+    dispatch(setConfigUrl(url));
+  }, [dispatch]);
+
   const commandPaletteSuggestions: Suggestion[] = useMemo(
     () =>
       commands
@@ -206,7 +226,7 @@ export const DashboardPage: FC = () => {
         .map((command) => ({
           title: command.title,
           extra: 'hotkey' in command ? command.hotkey : undefined,
-          onClick: async (e) => {
+          onClick: (e) => {
             if ('isMode' in command && command.isMode) {
               setQuery('', true);
               setMode(command.key);
@@ -220,52 +240,36 @@ export const DashboardPage: FC = () => {
               command.onAction();
               return;
             }
-            if ('other' in command) {
-              if (command.key === 'clearInput') {
-                setQuery('');
-                focusInput();
-              } else if (command.key === 'reloadConfig') {
-                if (!configUrl) {
-                  toast.error('Config URL is empty');
-                  return;
-                }
-                reloadConfig({ configUrl });
-              } else if (command.key === 'setConfigUrlFromClipboard') {
-                const url = await getTextFromClipboard();
-                if (!url) return;
-                if (!checkIsValidUrl(url)) {
-                  toast.error('Config URL from clipboard is invalid');
-                  return;
-                }
-                toast.success('Config URL was successfully added');
-                dispatch(setConfigUrl(url));
-              }
+            if ('other' in command && !('hideInCommandPalette' in command)) {
+              ({
+                showConfig: () => handleShowConfig(e),
+                editConfig: () => handleEditConfig(e),
+                reloadConfig: handleReloadConfig,
+                setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
+              })[command.key]();
             }
           },
         })),
-    [configUrl, dispatch, focusInput, query, reloadConfig, setQuery],
+    [
+      handleEditConfig,
+      handleReloadConfig,
+      handleSetConfigUrlFromClipboard,
+      handleShowConfig,
+      query,
+      setQuery,
+    ],
   );
 
   const suggestions = useMemo(() => {
-    if (mode === 'searchOnGoogle') {
-      return googleSuggestions;
-    }
-    if (mode === 'searchOnYandex') {
-      return yandexSuggestions;
-    }
-    if (mode === 'searchInHistory') {
-      return historySuggestions;
-    }
-    if (mode === 'searchInBookmarks') {
-      return bookmarkSuggestions;
-    }
-    if (mode === 'searchInSessions') {
-      return sessionSuggestions;
-    }
-    if (mode === 'commandPalette') {
-      return commandPaletteSuggestions;
-    }
-    return [];
+    const modeMap = {
+      searchOnGoogle: googleSuggestions,
+      searchOnYandex: yandexSuggestions,
+      searchInHistory: historySuggestions,
+      searchInBookmarks: bookmarkSuggestions,
+      searchInSessions: sessionSuggestions,
+      commandPalette: commandPaletteSuggestions,
+    };
+    return modeMap[mode];
   }, [
     bookmarkSuggestions,
     commandPaletteSuggestions,
@@ -294,57 +298,93 @@ export const DashboardPage: FC = () => {
     focusInput();
   }, [focusInput, mode]);
 
+  // === Navigation Hotkeys ===
   const upRef = useHotkeys<HTMLDivElement>(
-    'ArrowUp',
+    config?.mappings?.prevSuggestion ?? 'ArrowUp',
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
-    { enableOnFormTags: ['input'] },
+    { enableOnFormTags: ['input'], preventDefault: true },
   );
   const downRef = useHotkeys<HTMLDivElement>(
-    'ArrowDown',
+    config?.mappings?.nextSuggestion ?? 'ArrowDown',
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
-    { enableOnFormTags: ['input'] },
+    { enableOnFormTags: ['input'], preventDefault: true },
   );
 
-  useHotkeys('ctrl+g', () => setMode('searchOnGoogle'), {
+  // === Mode Hotkeys ===
+  useHotkeys(config?.mappings?.searchOnGoogle ?? 'ctrl+g', () => setMode('searchOnGoogle'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys('ctrl+y', () => setMode('searchOnYandex'), {
+  useHotkeys(config?.mappings?.searchOnYandex ?? 'ctrl+y', () => setMode('searchOnYandex'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys('ctrl+h', () => setMode('searchInHistory'), {
+  useHotkeys(config?.mappings?.searchInHistory ?? 'ctrl+h', () => setMode('searchInHistory'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys('ctrl+b', () => setMode('searchInBookmarks'), {
+  useHotkeys(config?.mappings?.searchInBookmarks ?? 'ctrl+b', () => setMode('searchInBookmarks'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys('ctrl+s', () => setMode('searchInSessions'), {
+  useHotkeys(config?.mappings?.searchInSessions ?? 'ctrl+s', () => setMode('searchInSessions'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys('ctrl+p', () => setMode('commandPalette'), {
+  useHotkeys(config?.mappings?.commandPalette ?? 'ctrl+p', () => setMode('commandPalette'), {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+
+  // === Other Hotkeys ===
+  useHotkeys(config?.mappings?.commandPalette ?? 'ctrl+l', () => setQuery(''), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
   useHotkeys(
-    'ctrl+l',
-    () => {
-      setQuery('');
-      focusInput();
-    },
+    config?.mappings?.openLinkFromClipboard ?? [],
+    commandsMap.openLinkFromClipboard.onAction,
     { enableOnFormTags: ['input'], preventDefault: true },
   );
+  useHotkeys(
+    config?.mappings?.openGoogle ?? [],
+    (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey),
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  useHotkeys(
+    config?.mappings?.openYandex ?? [],
+    (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey),
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  useHotkeys(
+    config?.mappings?.searchOnGoogleFromClipboard ?? [],
+    commandsMap.searchOnGoogleFromClipboard.onAction,
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  useHotkeys(
+    config?.mappings?.searchOnYandexFromClipboard ?? [],
+    commandsMap.searchOnYandexFromClipboard.onAction,
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  useHotkeys(config?.mappings?.showConfig ?? [], handleShowConfig, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(config?.mappings?.editConfig ?? [], handleEditConfig, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(config?.mappings?.reloadConfig ?? [], handleReloadConfig, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(config?.mappings?.setConfigUrlFromClipboard ?? [], handleSetConfigUrlFromClipboard, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
 
   return (
     <div className={cls.container}>
-      <div>{activeSuggestionIndex}</div>
-
-      <div>{query}</div>
-      <div>{debouncedQuery}</div>
-
       <div className={cls.search} ref={mergeRefs(upRef, downRef)}>
         <div className={cls.inputBox}>
           <div className={cls.inputIcon}>{commandsMap[mode].icon}</div>
