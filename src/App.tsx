@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-const App: FC = () => {
-  return <div>Nerd Startpage</div>;
-};
+import { DashboardPage } from '#pages/DashboardPage';
+
+const App: FC = () => <DashboardPage />;
 
 export default App;

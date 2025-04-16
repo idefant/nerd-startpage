@@ -3,8 +3,11 @@
   "version": "0.2.0",
   "manifest_version": 3,
   "description": "Lightweight and fast new tab page extension",
-  "permissions": ["tabs", "history", "bookmarks"],
-  "host_permissions": ["https://suggestqueries.google.com/complete/search"],
+  "permissions": ["tabs", "history", "bookmarks", "sessions"],
+  "host_permissions": [
+    "https://suggestqueries.google.com/complete/search",
+    "https://ya.ru/suggest/suggest-ya.cgi"
+  ],
   "action": {
     "default_title": "Nerd Startpage"
   },

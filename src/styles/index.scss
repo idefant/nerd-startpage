@@ -28,3 +28,9 @@ body {
   background-color: var(--bg);
   width: 100%;
 }
+
+input,
+textarea,
+button {
+  color: var(--primary-color);
+}

@@ -1,0 +1,90 @@
+.container {
+  margin: 20px;
+}
+
+.search {
+  position: relative;
+  width: 50%;
+  margin: 0 auto 50px;
+}
+
+.input {
+  &Box {
+    display: flex;
+    border: 3px solid var(--primary-color);
+    background-color: var(--bg-paper);
+  }
+
+  &Icon {
+    font-size: 20px;
+    place-self: center center;
+    width: 26px;
+    min-width: 26px;
+    max-width: 26px;
+    text-align: center;
+    margin-left: 10px;
+  }
+
+  &Field {
+    background-color: unset;
+    border: none;
+    width: 100%;
+    font-size: 18px;
+    outline: none;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  &Suggestions {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    background-color: var(--bg-paper);
+    width: 100%;
+    border: 3px solid var(--primary-color);
+    border-top: none;
+    box-sizing: border-box;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+
+    &Hidden {
+      display: none;
+    }
+  }
+}
+
+.suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: transparent;
+  width: 100%;
+  text-align: left;
+  border: none;
+  padding: 7px 12px;
+  cursor: pointer;
+
+  &Title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &Extra {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.5;
+    font-size: 13px;
+  }
+
+  &Active {
+    background: #444;
+  }
+
+  &:hover {
+    background-color: #444;
+  }
+}

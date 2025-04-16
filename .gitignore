@@ -15,6 +15,7 @@ vite.config.js
 vite.config.d.ts
 tsconfig.node.tsbuildinfo
 tsconfig.tsbuildinfo
+web-ext-artifacts
 
 # Editor directories and files
 .vscode/*
