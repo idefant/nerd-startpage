@@ -12,6 +12,7 @@ export const mainApi = createApi({
       query: ({ configUrl }) => ({
         url: configUrl,
         method: 'GET',
+        params: { dt: Date.now() },
         responseHandler: async (response) => {
           if (!response.ok) return response;
 

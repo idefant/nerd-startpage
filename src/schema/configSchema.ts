@@ -51,3 +51,7 @@ export const configSchema = z.object({
     )
     .optional(),
 });
+
+export const hotkeysCommandList = Object.entries(
+  configSchema.shape.mappings.unwrap().keyof().options,
+).map(([, key]) => key);

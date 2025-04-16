@@ -12,6 +12,7 @@ import { useGoogleSuggestions } from '#hooks/useGoogleSuggestions';
 import { useHistorySuggestions } from '#hooks/useHistorySuggestions';
 import { useSessionSuggestions } from '#hooks/useSessionSuggestions';
 import { useYandexSuggestions } from '#hooks/useYandexSuggestions';
+import { hotkeysCommandList } from '#schema/configSchema';
 import { setConfigUrl } from '#store/reducers/configSlice';
 import { FilterWithIsMode, ToTuple } from '#types/basicType';
 import { modeList } from '#types/modeType';
@@ -40,7 +41,7 @@ const commandKeys = [
 
 type CommandKey = (typeof commandKeys)[number];
 
-type Command2 = {
+type Command = {
   title: string;
   hotkey?: string;
   hideInCommandPalette?: boolean;
@@ -74,7 +75,7 @@ type Command2 = {
 );
 
 const commandsMap = {
-  searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+f', isMode: true, icon: '' },
+  searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+g', isMode: true, icon: '' },
   searchOnYandex: { title: 'Search on Yandex', hotkey: 'ctrl+y', isMode: true, icon: '' },
   searchInHistory: { title: 'Search in History', hotkey: 'ctrl+h', isMode: true, icon: '' },
   searchInBookmarks: { title: 'Search in Bookmarks', hotkey: 'ctrl+b', isMode: true, icon: '' },
@@ -133,7 +134,7 @@ const commandsMap = {
     title: 'Set config url from clipboard',
     other: true,
   },
-} satisfies Record<CommandKey, Command2>;
+} satisfies Record<CommandKey, Command>;
 
 type Mode = keyof FilterWithIsMode<typeof commandsMap>;
 
@@ -216,6 +217,22 @@ export const DashboardPage: FC = () => {
     dispatch(setConfigUrl(url));
   }, [dispatch]);
 
+  const hotkeys = useMemo(
+    () =>
+      Object.fromEntries(
+        hotkeysCommandList.map((commandKey) => {
+          if (config?.mappings?.[commandKey]) {
+            return [commandKey, config?.mappings?.[commandKey]];
+          }
+          if (commandKey in commandsMap && 'hotkey' in commandsMap[commandKey as CommandKey]) {
+            return [commandKey, (commandsMap[commandKey as CommandKey] as any).hotkey as string];
+          }
+          return [commandKey, []];
+        }),
+      ) as Record<(typeof hotkeysCommandList)[number], string | string[]>,
+    [config?.mappings],
+  );
+
   const commandPaletteSuggestions: Suggestion[] = useMemo(
     () =>
       commands
@@ -223,38 +240,50 @@ export const DashboardPage: FC = () => {
         .filter((command) =>
           query ? command.title.toLowerCase().includes(query.toLowerCase()) : true,
         )
-        .map((command) => ({
-          title: command.title,
-          extra: 'hotkey' in command ? command.hotkey : undefined,
-          onClick: (e) => {
-            if ('isMode' in command && command.isMode) {
-              setQuery('', true);
-              setMode(command.key);
-              return;
+        .map((command) => {
+          const hotkeysList = hotkeys[command.key];
+          const extra = (() => {
+            if (typeof hotkeysList === 'string') {
+              return hotkeysList;
             }
-            if ('url' in command && command.url) {
-              openUrl(command.url, e?.ctrlKey);
-              return;
-            }
-            if ('onAction' in command) {
-              command.onAction();
-              return;
-            }
-            if ('other' in command && !('hideInCommandPalette' in command)) {
-              ({
-                showConfig: () => handleShowConfig(e),
-                editConfig: () => handleEditConfig(e),
-                reloadConfig: handleReloadConfig,
-                setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
-              })[command.key]();
-            }
-          },
-        })),
+            if (hotkeysList.length === 0) return undefined;
+            return hotkeysList.join(', ');
+          })();
+
+          return {
+            title: command.title,
+            extra,
+            onClick: (e) => {
+              if ('isMode' in command && command.isMode) {
+                setQuery('', true);
+                setMode(command.key);
+                return;
+              }
+              if ('url' in command && command.url) {
+                openUrl(command.url, e?.ctrlKey);
+                return;
+              }
+              if ('onAction' in command) {
+                command.onAction();
+                return;
+              }
+              if ('other' in command && !('hideInCommandPalette' in command)) {
+                ({
+                  showConfig: () => handleShowConfig(e),
+                  editConfig: () => handleEditConfig(e),
+                  reloadConfig: handleReloadConfig,
+                  setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
+                })[command.key]();
+              }
+            },
+          };
+        }),
     [
       handleEditConfig,
       handleReloadConfig,
       handleSetConfigUrlFromClipboard,
       handleShowConfig,
+      hotkeys,
       query,
       setQuery,
     ],
@@ -300,85 +329,82 @@ export const DashboardPage: FC = () => {
 
   // === Navigation Hotkeys ===
   const upRef = useHotkeys<HTMLDivElement>(
-    config?.mappings?.prevSuggestion ?? 'ArrowUp',
+    hotkeys.prevSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
     { enableOnFormTags: ['input'], preventDefault: true },
   );
   const downRef = useHotkeys<HTMLDivElement>(
-    config?.mappings?.nextSuggestion ?? 'ArrowDown',
+    hotkeys.nextSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
     { enableOnFormTags: ['input'], preventDefault: true },
   );
 
   // === Mode Hotkeys ===
-  useHotkeys(config?.mappings?.searchOnGoogle ?? 'ctrl+g', () => setMode('searchOnGoogle'), {
+  useHotkeys(hotkeys.searchOnGoogle, () => setMode('searchOnGoogle'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.searchOnYandex ?? 'ctrl+y', () => setMode('searchOnYandex'), {
+  useHotkeys(hotkeys.searchOnYandex, () => setMode('searchOnYandex'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.searchInHistory ?? 'ctrl+h', () => setMode('searchInHistory'), {
+  useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.searchInBookmarks ?? 'ctrl+b', () => setMode('searchInBookmarks'), {
+  useHotkeys(hotkeys.searchInBookmarks, () => setMode('searchInBookmarks'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.searchInSessions ?? 'ctrl+s', () => setMode('searchInSessions'), {
+  useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.commandPalette ?? 'ctrl+p', () => setMode('commandPalette'), {
+  useHotkeys(hotkeys.commandPalette, () => setMode('commandPalette'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
 
   // === Other Hotkeys ===
-  useHotkeys(config?.mappings?.commandPalette ?? 'ctrl+l', () => setQuery(''), {
+  useHotkeys(hotkeys.clearInput, () => setQuery(''), {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(hotkeys.openLinkFromClipboard, commandsMap.openLinkFromClipboard.onAction, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(hotkeys.openGoogle, (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey), {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(hotkeys.openYandex, (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
   useHotkeys(
-    config?.mappings?.openLinkFromClipboard ?? [],
-    commandsMap.openLinkFromClipboard.onAction,
-    { enableOnFormTags: ['input'], preventDefault: true },
-  );
-  useHotkeys(
-    config?.mappings?.openGoogle ?? [],
-    (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey),
-    { enableOnFormTags: ['input'], preventDefault: true },
-  );
-  useHotkeys(
-    config?.mappings?.openYandex ?? [],
-    (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey),
-    { enableOnFormTags: ['input'], preventDefault: true },
-  );
-  useHotkeys(
-    config?.mappings?.searchOnGoogleFromClipboard ?? [],
+    hotkeys.searchOnGoogleFromClipboard,
     commandsMap.searchOnGoogleFromClipboard.onAction,
     { enableOnFormTags: ['input'], preventDefault: true },
   );
   useHotkeys(
-    config?.mappings?.searchOnYandexFromClipboard ?? [],
+    hotkeys.searchOnYandexFromClipboard,
     commandsMap.searchOnYandexFromClipboard.onAction,
     { enableOnFormTags: ['input'], preventDefault: true },
   );
-  useHotkeys(config?.mappings?.showConfig ?? [], handleShowConfig, {
+  useHotkeys(hotkeys.showConfig, handleShowConfig, {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.editConfig ?? [], handleEditConfig, {
+  useHotkeys(hotkeys.editConfig, handleEditConfig, {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.reloadConfig ?? [], handleReloadConfig, {
+  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
-  useHotkeys(config?.mappings?.setConfigUrlFromClipboard ?? [], handleSetConfigUrlFromClipboard, {
+  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
