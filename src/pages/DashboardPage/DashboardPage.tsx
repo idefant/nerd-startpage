@@ -150,6 +150,7 @@ export const DashboardPage: FC = () => {
   const [mode, setMode] = useState<Mode>('searchOnGoogle');
   const [query, debouncedQuery, setQuery] = useDebounceState('', 300);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(-1);
+  const [hasBackdrop, setHasBackdrop] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
@@ -334,6 +335,10 @@ export const DashboardPage: FC = () => {
     focusInput();
   }, [focusInput, mode]);
 
+  useEffect(() => {
+    setHasBackdrop(!!query || !!suggestions.length);
+  }, [query, suggestions.length]);
+
   // === Navigation Hotkeys ===
   const upRef = useHotkeys<HTMLDivElement>(
     hotkeys.prevSuggestion,
@@ -343,6 +348,18 @@ export const DashboardPage: FC = () => {
   const downRef = useHotkeys<HTMLDivElement>(
     hotkeys.nextSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  useHotkeys(
+    'Esc',
+    () => {
+      focusInput();
+      if (hasBackdrop) {
+        setHasBackdrop(false);
+      } else {
+        setHasBackdrop(!!query || !!suggestions.length);
+      }
+    },
     { enableOnFormTags: ['input'], preventDefault: true },
   );
 
@@ -373,7 +390,7 @@ export const DashboardPage: FC = () => {
   });
 
   // === Other Hotkeys ===
-  useHotkeys(hotkeys.clearInput, () => setQuery(''), {
+  useHotkeys(hotkeys.clearInput, () => setQuery('', true), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
@@ -416,6 +433,14 @@ export const DashboardPage: FC = () => {
     preventDefault: true,
   });
 
+  const handleChangeInputValue = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const immediately = !e.target.value;
+      setQuery(e.target.value, immediately);
+    },
+    [setQuery],
+  );
+
   const handleKeyDownInInput = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
@@ -454,14 +479,14 @@ export const DashboardPage: FC = () => {
             autoComplete=""
             autoFocus
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleChangeInputValue}
             onKeyDown={handleKeyDownInInput}
             ref={inputRef}
           />
         </div>
         <div
           className={classNames(cls.inputSuggestions, {
-            [cls.inputSuggestionsHidden]: suggestions.length === 0,
+            [cls.inputSuggestionsHidden]: !hasBackdrop || suggestions.length === 0,
           })}
           ref={suggestionsRef}
         >
@@ -485,6 +510,11 @@ export const DashboardPage: FC = () => {
         columnGap={config?.columns?.gap}
         columnMaxCount={config?.columns?.maxCount}
         categories={config?.categories}
+      />
+
+      <div
+        className={classNames(cls.backdrop, { [cls.backdropHidden]: !hasBackdrop })}
+        onClick={() => setHasBackdrop(false)}
       />
     </div>
   );

@@ -4,6 +4,7 @@
 
 .search {
   position: relative;
+  z-index: var(--z-search);
   width: 50%;
   margin: 0 auto 48px;
 }
@@ -38,7 +39,6 @@
   &Suggestions {
     display: block;
     position: absolute;
-    z-index: 1;
     background-color: var(--bg-paper);
     width: 100%;
     border: 3px solid var(--primary-color);
@@ -87,5 +87,18 @@
 
   &:hover {
     background-color: var(--transparent-primary-color);
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: #2222;
+  backdrop-filter: blur(3px);
+  transition: 0.1s opacity;
+
+  &Hidden {
+    pointer-events: none;
+    opacity: 0;
   }
 }
