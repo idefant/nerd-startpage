@@ -23,6 +23,7 @@ export const configSchema = z.object({
       searchInHistory: z.array(z.string()).optional(),
       searchInBookmarks: z.array(z.string()).optional(),
       searchInSessions: z.array(z.string()).optional(),
+      commandPalette: z.array(z.string()).optional(),
       clearInput: z.array(z.string()).optional(),
       openLinkFromClipboard: z.array(z.string()).optional(),
       openGoogle: z.array(z.string()).optional(),
@@ -33,7 +34,7 @@ export const configSchema = z.object({
       showConfig: z.array(z.string()).optional(),
       reloadConfig: z.array(z.string()).optional(),
       setConfigUrlFromClipboard: z.array(z.string()).optional(),
-      commandPalette: z.array(z.string()).optional(),
+      showMyIP: z.array(z.string()).optional(),
     })
     .optional(),
 

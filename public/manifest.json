@@ -6,7 +6,8 @@
   "permissions": ["tabs", "history", "bookmarks", "sessions"],
   "host_permissions": [
     "https://suggestqueries.google.com/complete/search",
-    "https://ya.ru/suggest/suggest-ya.cgi"
+    "https://ya.ru/suggest/suggest-ya.cgi",
+    "https://api.myip.com/"
   ],
   "action": {
     "default_title": "Nerd Startpage"

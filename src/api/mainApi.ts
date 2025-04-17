@@ -49,6 +49,12 @@ export const mainApi = createApi({
         params: { v: 4, part: query },
       }),
     }),
+    fetchMyIp: builder.query<{ ip: string; country: string; cc: string }, undefined>({
+      query: () => ({
+        url: 'https://api.myip.com',
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -56,4 +62,5 @@ export const {
   useLazyFetchConfigQuery,
   useFetchGoogleSuggestionsQuery,
   useFetchYandexSuggestionsQuery,
+  useLazyFetchMyIpQuery,
 } = mainApi;

@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
 
-import { useLazyFetchConfigQuery } from '#api/mainApi';
+import { useLazyFetchConfigQuery, useLazyFetchMyIpQuery } from '#api/mainApi';
 import { useAppDispatch, useAppSelector } from '#hooks/reduxHooks';
 import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
@@ -38,6 +38,7 @@ const commandKeys = [
   'showConfig',
   'reloadConfig',
   'setConfigUrlFromClipboard',
+  'showMyIP',
 ] as const;
 
 type CommandKey = (typeof commandKeys)[number];
@@ -135,6 +136,10 @@ const commandsMap = {
     title: 'Set config url from clipboard',
     other: true,
   },
+  showMyIP: {
+    title: 'Show my IP',
+    other: true,
+  },
 } satisfies Record<CommandKey, Command>;
 
 type Mode = keyof FilterWithIsMode<typeof commandsMap>;
@@ -165,6 +170,7 @@ export const DashboardPage: FC = () => {
   const historySuggestions = useHistorySuggestions(debouncedQuery, mode === 'searchInHistory');
   const bookmarkSuggestions = useBookmarkSuggestions(debouncedQuery, mode === 'searchInBookmarks');
   const sessionSuggestions = useSessionSuggestions(mode === 'searchInSessions');
+  const [fetchIP] = useLazyFetchMyIpQuery();
 
   const focusInput = useCallback(() => inputRef.current?.focus(), []);
 
@@ -218,6 +224,24 @@ export const DashboardPage: FC = () => {
     toast.success('Config URL was successfully added');
     dispatch(setConfigUrl(url));
   }, [dispatch]);
+
+  const handleShowIP = useCallback(async () => {
+    const res = await fetchIP(undefined);
+    if (res.error) {
+      toast.error('Не удалось получить IP адрес');
+      return;
+    }
+    toast.success(
+      <div>
+        <div>
+          <b>IP:</b> {res.data?.ip}
+        </div>
+        <div>
+          <b>Country:</b> {res.data?.country}
+        </div>
+      </div>,
+    );
+  }, [fetchIP]);
 
   const hotkeys = useMemo(
     () =>
@@ -281,6 +305,7 @@ export const DashboardPage: FC = () => {
                   editConfig: () => handleEditConfig(e),
                   reloadConfig: handleReloadConfig,
                   setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
+                  showMyIP: handleShowIP,
                 })[command.key]();
               }
             },
@@ -291,6 +316,7 @@ export const DashboardPage: FC = () => {
       handleReloadConfig,
       handleSetConfigUrlFromClipboard,
       handleShowConfig,
+      handleShowIP,
       hotkeys,
       query,
       setQuery,
