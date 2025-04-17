@@ -10,11 +10,18 @@ type CategoryCardProps = NonNullable<Config['categories']>[number] &
     ref?: React.Ref<HTMLDivElement>;
   };
 
-export const CategoryCard: FC<CategoryCardProps> = ({ name, links, className, ref, ...props }) => {
+export const CategoryCard: FC<CategoryCardProps> = ({
+  name,
+  links,
+  className,
+  color = 'white',
+  ref,
+  ...props
+}) => {
   const hasSomeIcon = links.some((link) => link.icon);
 
   return (
-    <div className={classNames(cls.card, className)} ref={ref} {...props}>
+    <div className={classNames(cls.card, cls[color], className)} ref={ref} {...props}>
       <div className={cls.name}>{name}</div>
       <div className={cls.links}>
         {links.map((link) => (

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { colorList } from '#types/colorType';
 import { modeList } from '#types/modeType';
 
 export const configSchema = z.object({
@@ -40,6 +41,7 @@ export const configSchema = z.object({
     .array(
       z.object({
         name: z.string(),
+        color: z.enum(colorList).optional(),
         links: z.array(
           z.object({
             name: z.string(),

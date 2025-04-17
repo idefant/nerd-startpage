@@ -1,5 +1,24 @@
 :root {
-  --bg: #333;
+  --bg: #2e2e2e;
   --bg-paper: #222;
-  --primary-color: #fef3c7;
+  --primary-color:     oklch(86% 0.053 95.62deg);
+  --red-color:         oklch(86% 0.053 0deg);
+  --orange-color:      oklch(86% 0.053 75.44deg);
+  --yellow-color:      oklch(86% 0.053 105.31deg);
+  --green-color:       oklch(86% 0.053 140.31deg);
+  --light-green-color: oklch(86% 0.053 167.62deg);
+  --light-blue-color:  oklch(86% 0.053 212.86deg);
+  --blue-color:        oklch(86% 0.053 274.32deg);
+  --violet-color:      oklch(86% 0.053 304.2deg);
+  --pink-color:        oklch(86% 0.053 345.17deg);
+  --transparent-primary-color:     oklch(86% 0.053 95.62deg / 25%);
+  --transparent-red-color:         oklch(86% 0.053 0deg / 25%);
+  --transparent-orange-color:      oklch(86% 0.053 75.44deg / 25%);
+  --transparent-yellow-color:      oklch(86% 0.053 105.31deg / 25%);
+  --transparent-green-color:       oklch(86% 0.053 140.31deg / 25%);
+  --transparent-light-green-color: oklch(86% 0.053 167.62deg / 25%);
+  --transparent-light-blue-color:  oklch(86% 0.053 212.86deg / 25%);
+  --transparent-blue-color:        oklch(86% 0.053 274.32deg / 25%);
+  --transparent-violet-color:      oklch(86% 0.053 304.2deg / 25%);
+  --transparent-pink-color:        oklch(86% 0.053 345.17deg / 25%);
 }

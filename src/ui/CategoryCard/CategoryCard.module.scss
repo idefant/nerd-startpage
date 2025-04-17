@@ -1,13 +1,64 @@
 .card {
-  border: 3px solid var(--primary-color);
+  color: var(--card-color);
+  border: 3px solid var(--card-color);
   background-color: var(--bg-paper);
   box-sizing: border-box;
   font-size: 18px;
 }
 
+.white {
+  --card-color: var(--primary-color);
+  --card-transparent-color: var(--transparent-primary-color);
+}
+
+.red {
+  --card-color: var(--red-color);
+  --card-transparent-color: var(--transparent-red-color);
+}
+
+.orange {
+  --card-color: var(--orange-color);
+  --card-transparent-color: var(--transparent-orange-color);
+}
+
+.yellow {
+  --card-color: var(--yellow-color);
+  --card-transparent-color: var(--transparent-yellow-color);
+}
+
+.green {
+  --card-color: var(--green-color);
+  --card-transparent-color: var(--transparent-green-color);
+}
+
+.lightGreen {
+  --card-color: var(--light-green-color);
+  --card-transparent-color: var(--transparent-light-green-color);
+}
+
+.lightBlue {
+  --card-color: var(--light-blue-color);
+  --card-transparent-color: var(--transparent-light-blue-color);
+}
+
+.blue {
+  --card-color: var(--blue-color);
+  --card-transparent-color: var(--transparent-blue-color);
+}
+
+.violet {
+  --card-color: var(--violet-color);
+  --card-transparent-color: var(--transparent-violet-color);
+}
+
+.pink {
+  --card-color: var(--pink-color);
+  --card-transparent-color: var(--transparent-pink-color);
+}
+
 .name {
   padding: 10px 14px;
-  border-bottom: 3px solid var(--primary-color);
+  border-bottom: 3px solid var(--card-color);
   text-align: center;
   font-weight: bold;
   white-space: nowrap;
@@ -20,7 +71,7 @@
 }
 
 .link {
-  color: var(--primary-color);
+  color: var(--card-color);
   display: block;
   text-decoration: none;
   padding: 2px 7px;
@@ -31,7 +82,7 @@
   overflow: hidden;
 
   &:hover {
-    background-color: #444;
+    background-color: var(--card-transparent-color);
   }
 
   &Icon {

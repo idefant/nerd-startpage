@@ -39,6 +39,7 @@ export const CategoryGrid: FC<CategoryGridProps> = ({
         {categories?.map((category, i) => (
           <CategoryCard
             name={category.name}
+            color={category.color}
             links={category.links}
             style={{
               width: columnWidth,

@@ -81,10 +81,11 @@
   }
 
   &Active {
-    background: #444;
+    background-color: var(--primary-color) !important;
+    color: var(--bg-paper);
   }
 
   &:hover {
-    background-color: #444;
+    background-color: var(--transparent-primary-color);
   }
 }
