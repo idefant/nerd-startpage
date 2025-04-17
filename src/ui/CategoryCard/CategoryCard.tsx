@@ -1,8 +1,9 @@
-import { FC } from 'react';
+import classNames from 'classnames';
+import { FC, HTMLAttributes } from 'react';
 
 import cls from './CategoryCard.module.scss';
 
-interface CategoryCardProps {
+interface CategoryCardProps extends HTMLAttributes<HTMLDivElement> {
   name: string;
   links: {
     name: string;
@@ -10,13 +11,14 @@ interface CategoryCardProps {
     icon?: string;
     hotkey?: string;
   }[];
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-export const CategoryCard: FC<CategoryCardProps> = ({ name, links }) => {
+export const CategoryCard: FC<CategoryCardProps> = ({ name, links, className, ref, ...props }) => {
   const hasSomeIcon = links.some((link) => link.icon);
 
   return (
-    <div className={cls.card}>
+    <div className={classNames(cls.card, className)} ref={ref} {...props}>
       <div className={cls.name}>{name}</div>
       <div className={cls.links}>
         {links.map((link) => (
