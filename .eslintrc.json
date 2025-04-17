@@ -51,6 +51,7 @@
         "code": 100,
         "ignoreComments": true,
         "ignoreStrings": true,
+        "ignoreRegExpLiterals": true,
         "ignoreTemplateLiterals": true
       }
     ],

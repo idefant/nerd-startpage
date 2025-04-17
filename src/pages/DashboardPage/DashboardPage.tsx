@@ -44,6 +44,7 @@ const commandKeys = [
 
 type CommandKey = (typeof commandKeys)[number];
 
+/* eslint-disable no-unused-vars */
 type Command = {
   title: string;
   hotkey?: string;
@@ -76,6 +77,7 @@ type Command = {
         }
     ))
 );
+/* eslint-enable no-unused-vars */
 
 const commandsMap = {
   searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+g', isMode: true, icon: '' },
@@ -103,11 +105,12 @@ const commandsMap = {
     onAction: async () => {
       const url = await getTextFromClipboard();
       if (!url) return;
-      if (!checkIsValidUrl(url)) {
+      const urlValidationResult = checkIsValidUrl(url);
+      if (!urlValidationResult.success) {
         toast.error('URL from clipboard is invalid');
         return;
       }
-      openUrl(url);
+      openUrl(urlValidationResult.url);
     },
   },
   openGoogle: { title: 'Open Google', url: 'https://google.com' },
@@ -220,12 +223,13 @@ export const DashboardPage: FC = () => {
   const handleSetConfigUrlFromClipboard = useCallback(async () => {
     const url = await getTextFromClipboard();
     if (!url) return;
-    if (!checkIsValidUrl(url)) {
+    const urlValidationResult = checkIsValidUrl(url, true);
+    if (!urlValidationResult.success) {
       toast.error('Config URL from clipboard is invalid');
       return;
     }
     toast.success('Config URL was successfully added');
-    dispatch(setConfigUrl(url));
+    dispatch(setConfigUrl(urlValidationResult.url));
   }, [dispatch]);
 
   const handleShowIP = useCallback(async () => {
@@ -481,11 +485,21 @@ export const DashboardPage: FC = () => {
         if (activeSuggestionIndex === -1) {
           if (query) {
             if (mode === 'searchOnGoogle') {
+              const urlValidationResult = checkIsValidUrl(query);
+              if (urlValidationResult.success) {
+                openUrl(urlValidationResult.url, e.ctrlKey);
+                return;
+              }
               const url = getGoogleSearchUrl(query);
               openUrl(url, e.ctrlKey);
               return;
             }
             if (mode === 'searchOnYandex') {
+              const urlValidationResult = checkIsValidUrl(query);
+              if (urlValidationResult.success) {
+                openUrl(urlValidationResult.url, e.ctrlKey);
+                return;
+              }
               const url = getYandexSearchUrl(query);
               openUrl(url, e.ctrlKey);
               return;
