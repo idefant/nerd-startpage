@@ -5,6 +5,7 @@ export const modeList = [
   'searchInHistory',
   'searchInBookmarks',
   'searchInSessions',
+  'searchInLinks',
   'commandPalette',
 ] as const;
 

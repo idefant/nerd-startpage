@@ -10,6 +10,7 @@ import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
 import { useGoogleSuggestions } from '#hooks/useGoogleSuggestions';
 import { useHistorySuggestions } from '#hooks/useHistorySuggestions';
+import { useLinkSuggestions } from '#hooks/useLinkSuggestions';
 import { useNpmSuggestions } from '#hooks/useNpmSuggestions';
 import { useSessionSuggestions } from '#hooks/useSessionSuggestions';
 import { useYandexSuggestions } from '#hooks/useYandexSuggestions';
@@ -86,6 +87,7 @@ const commandsMap = {
   searchInHistory: { title: 'Search in History', hotkey: 'ctrl+h', isMode: true, icon: '' },
   searchInBookmarks: { title: 'Search in Bookmarks', hotkey: 'ctrl+b', isMode: true, icon: '' },
   searchInSessions: { title: 'Search in Sessions', hotkey: 'ctrl+s', isMode: true, icon: '󰭌' },
+  searchInLinks: { title: 'Search in Links', hotkey: 'ctrl+f', isMode: true, icon: '󱐋' },
   commandPalette: {
     title: 'Command Palette',
     hotkey: 'ctrl+p',
@@ -169,14 +171,15 @@ export const DashboardPage: FC = () => {
   const { configUrl, config } = useAppSelector((state) => state.config);
 
   const [reloadConfig] = useLazyFetchConfigQuery();
+  const [fetchIP] = useLazyFetchMyIpQuery();
 
   const googleSuggestions = useGoogleSuggestions(debouncedQuery, mode === 'searchOnGoogle');
   const yandexSuggestions = useYandexSuggestions(debouncedQuery, mode === 'searchOnYandex');
   const npmSuggestions = useNpmSuggestions(debouncedQuery, mode === 'searchOnNpm');
-  const historySuggestions = useHistorySuggestions(debouncedQuery, mode === 'searchInHistory');
-  const bookmarkSuggestions = useBookmarkSuggestions(debouncedQuery, mode === 'searchInBookmarks');
+  const historySuggestions = useHistorySuggestions(query, mode === 'searchInHistory');
+  const bookmarkSuggestions = useBookmarkSuggestions(query, mode === 'searchInBookmarks');
   const sessionSuggestions = useSessionSuggestions(mode === 'searchInSessions');
-  const [fetchIP] = useLazyFetchMyIpQuery();
+  const linkSuggestions = useLinkSuggestions(query, mode === 'searchInLinks');
 
   const focusInput = useCallback(() => inputRef.current?.focus(), []);
 
@@ -338,6 +341,7 @@ export const DashboardPage: FC = () => {
       searchInHistory: historySuggestions,
       searchInBookmarks: bookmarkSuggestions,
       searchInSessions: sessionSuggestions,
+      searchInLinks: linkSuggestions,
       commandPalette: commandPaletteSuggestions,
     };
     return modeMap[mode];
@@ -346,11 +350,16 @@ export const DashboardPage: FC = () => {
     commandPaletteSuggestions,
     googleSuggestions,
     historySuggestions,
+    linkSuggestions,
     mode,
     npmSuggestions,
     sessionSuggestions,
     yandexSuggestions,
   ]);
+
+  const handleShowBackdropIfNeed = useCallback(() => {
+    setHasBackdrop(!!query || !!suggestions.length);
+  }, [query, suggestions?.length]);
 
   useEffect(() => {
     setActiveSuggestionIndex(-1);
@@ -370,9 +379,7 @@ export const DashboardPage: FC = () => {
     focusInput();
   }, [focusInput, mode]);
 
-  useEffect(() => {
-    setHasBackdrop(!!query || !!suggestions.length);
-  }, [query, suggestions.length]);
+  useEffect(() => handleShowBackdropIfNeed(), [handleShowBackdropIfNeed]);
 
   // === Navigation Hotkeys ===
   const upRef = useHotkeys<HTMLDivElement>(
@@ -392,7 +399,7 @@ export const DashboardPage: FC = () => {
       if (hasBackdrop) {
         setHasBackdrop(false);
       } else {
-        setHasBackdrop(!!query || !!suggestions.length);
+        handleShowBackdropIfNeed();
       }
     },
     { enableOnFormTags: ['input'], preventDefault: true },
@@ -407,6 +414,10 @@ export const DashboardPage: FC = () => {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
+  useHotkeys(hotkeys.searchOnNpm, () => setMode('searchOnNpm'), {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
   useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
@@ -416,6 +427,10 @@ export const DashboardPage: FC = () => {
     preventDefault: true,
   });
   useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
+  useHotkeys(hotkeys.searchInLinks, () => setMode('searchInLinks'), {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
@@ -467,6 +482,10 @@ export const DashboardPage: FC = () => {
     enableOnFormTags: ['input'],
     preventDefault: true,
   });
+  useHotkeys(hotkeys.showMyIP, handleShowIP, {
+    enableOnFormTags: ['input'],
+    preventDefault: true,
+  });
 
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -509,6 +528,13 @@ export const DashboardPage: FC = () => {
               openUrl(url, e.ctrlKey);
               return;
             }
+            if (mode === 'searchInLinks') {
+              const links = (config?.categories || []).flatMap((category) => category.links);
+              const foundLink = links.find((link) => link.alias === query.trim());
+              if (!foundLink) return;
+              openUrl(foundLink.url, e.ctrlKey);
+              return;
+            }
           }
         } else {
           const suggestion = suggestions[activeSuggestionIndex];
@@ -516,7 +542,7 @@ export const DashboardPage: FC = () => {
         }
       }
     },
-    [activeSuggestionIndex, mode, query, suggestions],
+    [activeSuggestionIndex, config?.categories, mode, query, suggestions],
   );
 
   return (
@@ -531,6 +557,7 @@ export const DashboardPage: FC = () => {
             value={query}
             onChange={handleChangeInputValue}
             onKeyDown={handleKeyDownInInput}
+            onClick={handleShowBackdropIfNeed}
             ref={inputRef}
           />
         </div>

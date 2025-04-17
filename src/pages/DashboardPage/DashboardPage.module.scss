@@ -44,7 +44,7 @@
     border: 3px solid var(--primary-color);
     border-top: none;
     box-sizing: border-box;
-    max-height: calc(100vh - 100px);
+    max-height: calc(100vh - 140px);
     overflow-y: auto;
 
     &Hidden {
@@ -93,8 +93,8 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background-color: #2222;
-  backdrop-filter: blur(3px);
+  background-color: #20202037;
+  backdrop-filter: blur(4px);
   transition: 0.1s opacity;
 
   &Hidden {
