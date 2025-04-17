@@ -1,18 +1,14 @@
 import classNames from 'classnames';
 import { FC, HTMLAttributes } from 'react';
 
+import { Config } from '#types/configType';
+
 import cls from './CategoryCard.module.scss';
 
-interface CategoryCardProps extends HTMLAttributes<HTMLDivElement> {
-  name: string;
-  links: {
-    name: string;
-    url: string;
-    icon?: string;
-    hotkey?: string;
-  }[];
-  ref?: React.Ref<HTMLDivElement>;
-}
+type CategoryCardProps = NonNullable<Config['categories']>[number] &
+  HTMLAttributes<HTMLDivElement> & {
+    ref?: React.Ref<HTMLDivElement>;
+  };
 
 export const CategoryCard: FC<CategoryCardProps> = ({ name, links, className, ref, ...props }) => {
   const hasSomeIcon = links.some((link) => link.icon);

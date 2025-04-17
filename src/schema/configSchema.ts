@@ -43,6 +43,7 @@ export const configSchema = z.object({
         links: z.array(
           z.object({
             name: z.string(),
+            icon: z.string().optional(),
             url: z.string().url(),
             hotkey: z.string().optional(),
           }),
