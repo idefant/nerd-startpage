@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import mergeRefs from 'merge-refs';
-import { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
 
@@ -17,13 +17,11 @@ import { setConfigUrl } from '#store/reducers/configSlice';
 import { FilterWithIsMode, ToTuple } from '#types/basicType';
 import { modeList } from '#types/modeType';
 import { Suggestion, SuggestionActionEvent } from '#types/suggestionType';
-import { CategoryCard } from '#ui/CategoryCard';
+import { CategoryGrid } from '#ui/CategoryGrid';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
 import { getGoogleSearchUrl, getYandexSearchUrl } from '#utils/getSearchEngineUrl';
 import { getTextFromClipboard } from '#utils/getTextFromClipboard';
 import { loopBetween } from '#utils/loopBetween';
-import { maxBy } from '#utils/maxBy';
-import { minBy } from '#utils/minBy';
 import { openUrl } from '#utils/openUrl';
 
 import cls from './DashboardPage.module.scss';
@@ -418,84 +416,36 @@ export const DashboardPage: FC = () => {
     preventDefault: true,
   });
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const categoryListRef = useRef<(HTMLDivElement | null)[]>([]);
-
-  type CardCoord = { index: number; width: number; height: number; top: number; left: number };
-
-  const [categoriesListSize, setCategoriesListSize] = useState<{ width: number; height: number }>();
-  const [categoriesCoords, setCategoriesCoords] = useState<CardCoord[]>([]);
-
-  const roCallback = useCallback(() => {
-    if (!config || !config?.categories || !containerRef.current) return;
-
-    const elems = categoryListRef.current.filter((elem): elem is HTMLDivElement => !!elem);
-
-    const elemsSizes = elems.map((elem, i) => ({
-      index: i,
-      width: elem.offsetWidth,
-      height: elem.offsetHeight,
-    }));
-
-    const columnWidth = config.columns?.width || 200;
-    const columnGap = config.columns?.gap || 20;
-    const columnMaxCount = config.columns?.maxCount || 6;
-
-    const containerWidth = containerRef.current.offsetWidth;
-
-    const columnPotentialCount = Math.floor(
-      (containerWidth + columnGap) / (columnWidth + columnGap),
-    );
-
-    const columnsCount = Math.min(columnPotentialCount, columnMaxCount) || 1;
-
-    const categoriesListWidth = columnsCount * (columnWidth + columnGap) - columnGap;
-
-    const elemsLocations = elemsSizes.reduce(
-      (acc, elem) => {
-        const [minColumn] = minBy(acc, (column) => column.height);
-        if (!minColumn) return acc;
-
-        acc[minColumn.index].elems.push({
-          ...elem,
-          top: acc[minColumn.index].height,
-          left: minColumn.index * (columnWidth + columnGap),
-        });
-        acc[minColumn.index].height += elem.height + columnGap;
-
-        return acc;
-      },
-      [...Array(columnsCount)].map((_, i) => ({
-        index: i,
-        height: 0,
-        elems: [] as CardCoord[],
-      })),
-    );
-    const [maxColumn] = maxBy(elemsLocations, (category) => category.height);
-
-    setCategoriesListSize({ width: categoriesListWidth, height: maxColumn?.height || 0 });
-
-    const coords = elemsLocations.flatMap((elem) => elem.elems).sort((a, b) => a.index - b.index);
-
-    setCategoriesCoords(coords);
-  }, [config]);
-
-  const ro = useMemo(() => new ResizeObserver(roCallback), [roCallback]);
-
-  useLayoutEffect(() => {
-    const elems = categoryListRef.current.filter((elem): elem is HTMLDivElement => !!elem);
-    elems.forEach((elem) => ro.observe(elem));
-
-    return () => ro.disconnect();
-  }, [ro]);
-
-  useLayoutEffect(() => {
-    window.addEventListener('resize', roCallback);
-    return () => window.removeEventListener('resize', roCallback);
-  }, [roCallback]);
+  const handleKeyDownInInput = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
+        e.preventDefault();
+      }
+      if (e.code === 'Enter') {
+        if (activeSuggestionIndex === -1) {
+          if (query) {
+            if (mode === 'searchOnGoogle') {
+              const url = getGoogleSearchUrl(query);
+              openUrl(url, e.ctrlKey);
+              return;
+            }
+            if (mode === 'searchOnYandex') {
+              const url = getYandexSearchUrl(query);
+              openUrl(url, e.ctrlKey);
+              return;
+            }
+          }
+        } else {
+          const suggestion = suggestions[activeSuggestionIndex];
+          suggestion.onClick?.(e);
+        }
+      }
+    },
+    [activeSuggestionIndex, mode, query, suggestions],
+  );
 
   return (
-    <div className={cls.container} ref={containerRef}>
+    <div className={cls.container}>
       <div className={cls.search} ref={mergeRefs(upRef, downRef)}>
         <div className={cls.inputBox}>
           <div className={cls.inputIcon}>{commandsMap[mode].icon}</div>
@@ -505,28 +455,7 @@ export const DashboardPage: FC = () => {
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={async (e) => {
-              if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
-                e.preventDefault();
-              }
-              if (e.code === 'Enter') {
-                if (activeSuggestionIndex === -1) {
-                  if (mode === 'searchOnGoogle') {
-                    const url = getGoogleSearchUrl(query);
-                    openUrl(url, e.ctrlKey);
-                    return;
-                  }
-                  if (mode === 'searchOnYandex') {
-                    const url = getYandexSearchUrl(query);
-                    openUrl(url, e.ctrlKey);
-                    return;
-                  }
-                } else {
-                  const suggestion = suggestions[activeSuggestionIndex];
-                  suggestion.onClick?.(e);
-                }
-              }
-            }}
+            onKeyDown={handleKeyDownInInput}
             ref={inputRef}
           />
         </div>
@@ -551,29 +480,12 @@ export const DashboardPage: FC = () => {
         </div>
       </div>
 
-      <div
-        className={classNames(cls.categories, {
-          [cls.categoriesHidden]: categoriesCoords.length === 0,
-        })}
-        style={{ width: categoriesListSize?.width, height: categoriesListSize?.height }}
-      >
-        {config?.categories?.map((category, i) => (
-          <CategoryCard
-            name={category.name}
-            links={category.links}
-            style={{
-              width: config.columns?.width,
-              top: categoriesCoords[i]?.top,
-              left: categoriesCoords[i]?.left,
-            }}
-            className={cls.categoryCard}
-            ref={(elem) => {
-              categoryListRef.current[i] = elem;
-            }}
-            key={i}
-          />
-        ))}
-      </div>
+      <CategoryGrid
+        columnWidth={config?.columns?.width}
+        columnGap={config?.columns?.gap}
+        columnMaxCount={config?.columns?.maxCount}
+        categories={config?.categories}
+      />
     </div>
   );
 };
