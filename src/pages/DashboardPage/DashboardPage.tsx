@@ -10,6 +10,7 @@ import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
 import { useGoogleSuggestions } from '#hooks/useGoogleSuggestions';
 import { useHistorySuggestions } from '#hooks/useHistorySuggestions';
+import { useNpmSuggestions } from '#hooks/useNpmSuggestions';
 import { useSessionSuggestions } from '#hooks/useSessionSuggestions';
 import { useYandexSuggestions } from '#hooks/useYandexSuggestions';
 import { hotkeysCommandList } from '#schema/configSchema';
@@ -19,7 +20,7 @@ import { modeList } from '#types/modeType';
 import { Suggestion, SuggestionActionEvent } from '#types/suggestionType';
 import { CategoryGrid } from '#ui/CategoryGrid';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
-import { getGoogleSearchUrl, getYandexSearchUrl } from '#utils/getSearchEngineUrl';
+import { getGoogleSearchUrl, getNpmSearchUrl, getYandexSearchUrl } from '#utils/getSearchEngineUrl';
 import { getTextFromClipboard } from '#utils/getTextFromClipboard';
 import { loopBetween } from '#utils/loopBetween';
 import { openUrl } from '#utils/openUrl';
@@ -79,6 +80,7 @@ type Command = {
 const commandsMap = {
   searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+g', isMode: true, icon: '' },
   searchOnYandex: { title: 'Search on Yandex', hotkey: 'ctrl+y', isMode: true, icon: '' },
+  searchOnNpm: { title: 'Search on NPM', isMode: true, icon: '' },
   searchInHistory: { title: 'Search in History', hotkey: 'ctrl+h', isMode: true, icon: '' },
   searchInBookmarks: { title: 'Search in Bookmarks', hotkey: 'ctrl+b', isMode: true, icon: '' },
   searchInSessions: { title: 'Search in Sessions', hotkey: 'ctrl+s', isMode: true, icon: '󰭌' },
@@ -167,6 +169,7 @@ export const DashboardPage: FC = () => {
 
   const googleSuggestions = useGoogleSuggestions(debouncedQuery, mode === 'searchOnGoogle');
   const yandexSuggestions = useYandexSuggestions(debouncedQuery, mode === 'searchOnYandex');
+  const npmSuggestions = useNpmSuggestions(debouncedQuery, mode === 'searchOnNpm');
   const historySuggestions = useHistorySuggestions(debouncedQuery, mode === 'searchInHistory');
   const bookmarkSuggestions = useBookmarkSuggestions(debouncedQuery, mode === 'searchInBookmarks');
   const sessionSuggestions = useSessionSuggestions(mode === 'searchInSessions');
@@ -327,6 +330,7 @@ export const DashboardPage: FC = () => {
     const modeMap = {
       searchOnGoogle: googleSuggestions,
       searchOnYandex: yandexSuggestions,
+      searchOnNpm: npmSuggestions,
       searchInHistory: historySuggestions,
       searchInBookmarks: bookmarkSuggestions,
       searchInSessions: sessionSuggestions,
@@ -339,6 +343,7 @@ export const DashboardPage: FC = () => {
     googleSuggestions,
     historySuggestions,
     mode,
+    npmSuggestions,
     sessionSuggestions,
     yandexSuggestions,
   ]);
@@ -482,6 +487,11 @@ export const DashboardPage: FC = () => {
             }
             if (mode === 'searchOnYandex') {
               const url = getYandexSearchUrl(query);
+              openUrl(url, e.ctrlKey);
+              return;
+            }
+            if (mode === 'searchOnNpm') {
+              const url = getNpmSearchUrl(query);
               openUrl(url, e.ctrlKey);
               return;
             }

@@ -20,6 +20,7 @@ export const configSchema = z.object({
       prevSuggestion: z.array(z.string()).optional(),
       searchOnGoogle: z.array(z.string()).optional(),
       searchOnYandex: z.array(z.string()).optional(),
+      searchOnNpm: z.array(z.string()).optional(),
       searchInHistory: z.array(z.string()).optional(),
       searchInBookmarks: z.array(z.string()).optional(),
       searchInSessions: z.array(z.string()).optional(),

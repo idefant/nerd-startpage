@@ -49,6 +49,18 @@ export const mainApi = createApi({
         params: { v: 4, part: query },
       }),
     }),
+    fetchNpmSuggestions: builder.query<
+      {
+        package: { name: string; description?: string; version: string; links: { npm: string } };
+      }[],
+      { query: string }
+    >({
+      query: ({ query }) => ({
+        url: 'https://api.npms.io/v2/search/suggestions',
+        method: 'GET',
+        params: { q: query },
+      }),
+    }),
     fetchMyIp: builder.query<{ ip: string; country: string; cc: string }, undefined>({
       query: () => ({
         url: 'https://api.myip.com',
@@ -62,5 +74,6 @@ export const {
   useLazyFetchConfigQuery,
   useFetchGoogleSuggestionsQuery,
   useFetchYandexSuggestionsQuery,
+  useFetchNpmSuggestionsQuery,
   useLazyFetchMyIpQuery,
 } = mainApi;
