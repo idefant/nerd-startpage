@@ -19,10 +19,10 @@ Nerd Startpage - стартовая страница браузера, кото�
 ## Галерея
 
 <p align="center">
-  <img src=".github/dashboard.png?raw=true" width="390px" hspace="8" />
-  <img src=".github/google-search.png?raw=true" width="390px" hspace="8" />
-  <img src=".github/npm-search.png?raw=true" width="390px" hspace="8" />
-  <img src=".github/command-palette.png?raw=true" width="390px" hspace="8" />
+  <img src=".github/dashboard.png?raw=true" width="400px" />
+  <img src=".github/google-search.png?raw=true" width="400px" />
+  <img src=".github/npm-search.png?raw=true" width="400px" />
+  <img src=".github/command-palette.png?raw=true" width="400px" />
 </p>
 
 ## Использование
