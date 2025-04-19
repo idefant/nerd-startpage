@@ -1,10 +1,10 @@
 {
   "name": "nerd-startpage",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "vite build --watch --mode development",
     "firefox": "web-ext run --source-dir=dist --firefox=firefox",
     "build": "tsc -b && vite build",
     "preview": "vite preview",

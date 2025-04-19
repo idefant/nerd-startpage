@@ -1,9 +1,9 @@
 {
   "name": "Nerd Startpage",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "manifest_version": 3,
   "description": "Lightweight and fast new tab page extension",
-  "permissions": ["tabs", "history", "bookmarks", "sessions"],
+  "permissions": ["tabs", "history", "bookmarks", "sessions", "clipboardRead"],
   "host_permissions": [
     "https://suggestqueries.google.com/complete/search",
     "https://ya.ru/suggest/suggest-ya.cgi",
@@ -25,6 +25,11 @@
         "default": "Alt+T"
       },
       "description": "Open Nerd Startpage"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "c194f572-8632-44cf-b5b0-1a992b8bfae1@idefant.ru"
     }
   }
 }

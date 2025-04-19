@@ -10,7 +10,6 @@ export default defineConfig({
     open: true,
   },
   build: {
-    sourcemap: 'hidden',
     rollupOptions: {
       input: {
         index: path.resolve(__dirname, 'index.html'),

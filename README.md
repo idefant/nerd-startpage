@@ -64,7 +64,23 @@ Nerd Startpage - стартовая страница браузера, кото�
 
 ## Продакшн
 
-Build extension using `npm run build` command. Then go to <https://addons.mozilla.org/en-US/developers/> and sign the extension
+Mozilla [Developer Hub](https://addons.mozilla.org/en-US/developers/)
+
+```sh
+# Сборка проекта
+npm run build
+
+# Сборка расширения в zip - только для тестирования в качестве временного расширения на about:debugging#/runtime/this-firefox
+web-ext build -s dist
+
+# Сборка и отправка на подпись в Mozilla
+npx web-ext sign \
+  --api-key=$AMO_JWT_ISSUER \
+  --api-secret=$AMO_JWT_SECRET \
+  --channel=unlisted \
+  --source-dir=dist/ \
+  --artifacts-dir=build/
+```
 
 ## Разработка
 
