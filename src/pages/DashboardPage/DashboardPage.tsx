@@ -382,14 +382,70 @@ export const DashboardPage: FC = () => {
   useEffect(() => handleShowBackdropIfNeed(), [handleShowBackdropIfNeed]);
 
   // === Navigation Hotkeys ===
-  const upRef = useHotkeys<HTMLDivElement>(
+  const prevSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.prevSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
     { enableOnFormTags: ['input'], preventDefault: true },
   );
-  const downRef = useHotkeys<HTMLDivElement>(
+  const nextSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.nextSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  const enterRef = useHotkeys<HTMLInputElement>(
+    'Enter, Ctrl+Enter, Alt+Enter, Alt+Ctrl+Enter',
+    (e) => {
+      if (activeSuggestionIndex !== -1) {
+        const suggestion = suggestions[activeSuggestionIndex];
+        suggestion.onClick?.(e);
+        return;
+      }
+      if (!query) return;
+
+      if (mode === 'searchOnGoogle') {
+        const urlValidationResult = checkIsValidUrl(query);
+        if (urlValidationResult.success) {
+          openUrl(urlValidationResult.url, e.ctrlKey);
+          return;
+        }
+        const url = getGoogleSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchOnYandex') {
+        const urlValidationResult = checkIsValidUrl(query);
+        if (urlValidationResult.success) {
+          openUrl(urlValidationResult.url, e.ctrlKey);
+          return;
+        }
+        const url = getYandexSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchOnNpm') {
+        const url = getNpmSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchInLinks') {
+        const links = (config?.categories || []).flatMap((category) => category.links);
+        const foundLink = links.find((link) => link.alias === query.trim());
+        if (!foundLink) return;
+        openUrl(foundLink.url, e.ctrlKey);
+        return;
+      }
+    },
+    { enableOnFormTags: ['input'], preventDefault: true },
+  );
+  const continueFromRef = useHotkeys<HTMLInputElement>(
+    'Tab',
+    () => {
+      if (!(mode === 'searchOnGoogle' || mode === 'searchOnYandex') || activeSuggestionIndex === -1)
+        return;
+      const suggestion = suggestions[activeSuggestionIndex];
+      if (!suggestion.title) return;
+      setQuery(`${suggestion.title} `);
+    },
     { enableOnFormTags: ['input'], preventDefault: true },
   );
   useHotkeys(
@@ -495,59 +551,9 @@ export const DashboardPage: FC = () => {
     [setQuery],
   );
 
-  const handleKeyDownInInput = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
-        e.preventDefault();
-      }
-      if (e.code === 'Enter') {
-        if (activeSuggestionIndex === -1) {
-          if (query) {
-            if (mode === 'searchOnGoogle') {
-              const urlValidationResult = checkIsValidUrl(query);
-              if (urlValidationResult.success) {
-                openUrl(urlValidationResult.url, e.ctrlKey);
-                return;
-              }
-              const url = getGoogleSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchOnYandex') {
-              const urlValidationResult = checkIsValidUrl(query);
-              if (urlValidationResult.success) {
-                openUrl(urlValidationResult.url, e.ctrlKey);
-                return;
-              }
-              const url = getYandexSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchOnNpm') {
-              const url = getNpmSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchInLinks') {
-              const links = (config?.categories || []).flatMap((category) => category.links);
-              const foundLink = links.find((link) => link.alias === query.trim());
-              if (!foundLink) return;
-              openUrl(foundLink.url, e.ctrlKey);
-              return;
-            }
-          }
-        } else {
-          const suggestion = suggestions[activeSuggestionIndex];
-          suggestion.onClick?.(e);
-        }
-      }
-    },
-    [activeSuggestionIndex, config?.categories, mode, query, suggestions],
-  );
-
   return (
     <div className={cls.container}>
-      <div className={cls.search} ref={mergeRefs(upRef, downRef)}>
+      <div className={cls.search}>
         <div className={cls.inputBox}>
           <div className={cls.inputIcon}>{commandsMap[mode].icon}</div>
           <input
@@ -556,9 +562,14 @@ export const DashboardPage: FC = () => {
             autoFocus
             value={query}
             onChange={handleChangeInputValue}
-            onKeyDown={handleKeyDownInInput}
             onClick={handleShowBackdropIfNeed}
-            ref={inputRef}
+            ref={mergeRefs(
+              inputRef,
+              prevSuggestionRef,
+              nextSuggestionRef,
+              enterRef,
+              continueFromRef,
+            )}
           />
         </div>
         <div
