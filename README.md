@@ -1,54 +1,86 @@
-# React + TypeScript + Vite
+# Nerd Startpage
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Nerd Startpage - стартовая страница браузера, которая не требует использования мыши.
 
-Currently, two official plugins are available:
+## Фичи
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Отображение категорий в стиле Masonry
+- Возможность поиска в Google, Yandex, NPM
+- Подсказки от поисковых движков
+- Все конфигурация в YAML-файле
+- Поиск в истории браузера, закладках, списке недавно закрытых вкладок
+- Поиск по сохраненным ссылкам и алиасам на них
+- Палитра команд
+- Не требует использования мыши
+- Настраиваемые горячие клавиши
+- Минималистичный
+- Использует Nerd Fonts
 
-## Expanding the ESLint configuration
+## Галерея
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  <img src=".github/dashboard.png?raw=true" />
+  <img src=".github/google-search.png?raw=true">
+  <img src=".github/npm-search.png?raw=true" />
+  <img src=".github/command-palette.png?raw=true" />
+</div>
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Использование
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. Установите расширение [Firefox](https://addons.mozilla.org/en-US/firefox/addon/nerd-startpage/)
+2. Скачайте [config file](config.yaml)
+3. Замените данные на свои
+4. Опубликуйте `config.yaml` на Github Gist, Pastebin или любой другой платформе, где можно получить ссылку на `raw` формат.
+5. Скопируйте ссылку на `raw` формат (Для примера: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
+6. Нажмите комбинацию `Alt + T`, чтобы открыть Nerd Startpage
+7. Нажмите комбинацию `CTrl + P`, чтобы открыть палитру команд
+8. Выберите команду `Set config URL from clipboard`
+9. Перезагрузите конфиг командой `Reload config`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Горячие клавиши по умолчанию
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+| Название                           | Комбинация |
+| ---------------------------------- | ---------- |
+| Открыть Nerd Startpage             | `Alt + T`  |
+| Открыть палитру команд             | `Ctrl + P` |
+| Поиск в Google                     | `Ctrl + G` |
+| Поиск в Yandex                     | `Ctrl + Y` |
+| Поиск по истории                   | `Ctrl + H` |
+| Поиск по закладкам                 | `Ctrl + B` |
+| Поиск по недавно закрытым вкладкам | `Ctrl + S` |
+| Поиск по ссылкам и алиасам         | `Ctrl + F` |
+| Очистить поле ввода                | `Ctrl + L` |
+| Открыть ссылку из буфера обмена    | `Ctrl + O` |
+
+### Навигация по подсказкам
+
+| Название                         | Комбинация     |
+| -------------------------------- | -------------- |
+| Предыдущая подсказка             | `Arrow Up`     |
+| Следующая подсказка              | `Arrow Down`   |
+| Скрыть/показать панель подсказок | `Escape`       |
+| Открыть ссылку в текущей вкладке | `Enter`        |
+| Открыть ссылку в новой вкладке   | `Ctrl + Enter` |
+
+## Продакшн
+
+Build extension using `npm run build` command. Then go to <https://addons.mozilla.org/en-US/developers/> and sign the extension
+
+## Разработка
+
+```sh
+# Установка зависимостей
+npm install
+
+# Запуск в режиме разработки
+npm run dev
+
+# Запуск Firefox для разработки
+npm run firefox
+
+# Запуск витрины компонентов в режиме разработки
+npm run storybook
+
+# Запустить все команды разом можно с помощью Taskfile
+task dev
 ```

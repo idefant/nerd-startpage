@@ -1,0 +1,56 @@
+columns:
+  gap: 24
+  width: 220
+  maxCount: 6
+
+mappings:
+  nextSuggestion: ['ArrowDown']
+  prevSuggestion: ['ArrowUp']
+  searchOnGoogle: ['ctrl+g']
+  searchOnYandex: ['ctrl+y']
+  searchOnNpm: []
+  searchInHistory: ['ctrl+h']
+  searchInBookmarks: ['ctrl+b']
+  searchInSessions: ['ctrl+s']
+  searchInLinks: ['ctrl+f']
+  commandPalette: ['ctrl+p']
+  clearInput: ['ctrl+l']
+  openLinkFromClipboard: []
+  openGoogle: []
+  openYandex: []
+  searchOnGoogleFromClipboard: []
+  searchOnYandexFromClipboard: []
+  editConfig: []
+  showConfig: []
+  reloadConfig: []
+  setConfigUrlFromClipboard: []
+  showMyIP: []
+
+categories:
+  - name:  About_Project
+    links:
+      - { name: Repo, icon: , url: https://github.com/idefant/nerd-startpage, alias: gh }
+      - { name: My_Github_Profile, icon: , url: https://github.com/idefant }
+      - { name: My_Website, icon: 󰖟, url: https://idefant.ru }
+  - name:  Social
+    links:
+      - { name: Telegram, icon: , url: web.telegram.org/, alias: tg }
+      - { name: Youtube, icon: , url: https://youtube.com/, alias: yt }
+      - { name: Gmail, icon: 󰊫, url: https://mail.google.com/, alias: gm }
+      - { name: LinkedIn, icon: , url: linkedin.com, alias: li }
+      - { name: WhatsApp, icon: , url: https://web.whatsapp.com/, alias: wa }
+  - name:  Code
+    links:
+      - { name: NPM, icon: , url: https://www.npmjs.com/, alias: npm }
+      - { name: BundlePhobia, icon: , url: https://bundlephobia.com/, alias: bp }
+      - { name: CanInclude, url: https://caninclude.glitch.me/, alias: ci }
+      - { name: CanIUse, url: https://caniuse.com/, alias: cu }
+      - { name: Tailwind, icon: 󱏿, url: https://tailwindcss.com/, alias: tw }
+      - { name: Codewars, icon: 󰅩, url: https://www.codewars.com, alias: cw }
+  - name: 󱁤 Tools
+    links:
+      - { name: Excalidraw, icon: 󰽉, url: https://excalidraw.com, alias: ew }
+      - { name: GDrive, icon: , url: https://drive.google.com/ }
+  - name:  Music
+    links:
+      - { name: Music_For_Programming, url: https://musicforprogramming.net/, alias: mp }
