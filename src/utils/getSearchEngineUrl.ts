@@ -13,5 +13,5 @@ export const getNpmSearchUrl = (q: string) => {
   return `https://www.npmjs.com/search?${urlParams}`;
 };
 
-export const getBundlePhobiaPackageUrl = (name: string, version: string) =>
-  `https://bundlephobia.com/package/${name}@${version}`;
+export const getBundlePhobiaPackageUrl = (name: string) =>
+  `https://bundlephobia.com/package/${name}`;

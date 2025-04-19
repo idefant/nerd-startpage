@@ -16,11 +16,11 @@ export const useNpmSuggestions = (query: string, isEnabled = true) => {
       return [];
     }
     return (suggestions || []).map((suggestion) => ({
-      title: `${suggestion.package.name} - ${suggestion.package.version}`,
+      title: suggestion.package.name,
       extra: suggestion.package.description,
       onClick: (e) => {
         const url = e?.altKey
-          ? getBundlePhobiaPackageUrl(suggestion.package.name, suggestion.package.version)
+          ? getBundlePhobiaPackageUrl(suggestion.package.name)
           : suggestion.package.links.npm;
         openUrl(url, e?.ctrlKey);
       },
