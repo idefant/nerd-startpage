@@ -574,7 +574,7 @@ export const DashboardPage: FC = () => {
         </div>
         <div
           className={classNames(cls.inputSuggestions, {
-            [cls.inputSuggestionsHidden]: !hasBackdrop || suggestions.length === 0,
+            [cls.inputSuggestionsVisible]: hasBackdrop && suggestions.length !== 0,
           })}
           ref={suggestionsRef}
         >
@@ -601,7 +601,7 @@ export const DashboardPage: FC = () => {
       />
 
       <div
-        className={classNames(cls.backdrop, { [cls.backdropHidden]: !hasBackdrop })}
+        className={classNames(cls.backdrop, { [cls.backdropVisible]: hasBackdrop })}
         onClick={() => setHasBackdrop(false)}
       />
     </div>
