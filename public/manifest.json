@@ -1,0 +1,30 @@
+{
+  "name": "Nerd Startpage",
+  "version": "0.3.0",
+  "manifest_version": 3,
+  "description": "Lightweight and fast new tab page extension",
+  "permissions": ["tabs", "history", "bookmarks", "sessions"],
+  "host_permissions": [
+    "https://suggestqueries.google.com/complete/search",
+    "https://ya.ru/suggest/suggest-ya.cgi",
+    "https://api.npms.io/",
+    "https://api.myip.com/"
+  ],
+  "action": {
+    "default_title": "Nerd Startpage"
+  },
+  "chrome_url_overrides": {
+    "newtab": "load.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "commands": {
+    "open_startpage": {
+      "suggested_key": {
+        "default": "Alt+T"
+      },
+      "description": "Open Nerd Startpage"
+    }
+  }
+}

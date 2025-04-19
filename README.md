@@ -1,41 +1,86 @@
 # Nerd Startpage
 
-Nerd Startpage is designed to organize frequently used links in one place.
+Nerd Startpage - стартовая страница браузера, которая не требует использования мыши.
 
-## Features
+## Фичи
 
-- Lightweight and fast
-- Categories in the style of masonry
-- Suggestions
-- Easy configuration file
-- Using Shortcuts
-- Minimalistic
+- Отображение категорий в стиле Masonry
+- Возможность поиска в Google, Yandex, NPM
+- Подсказки от поисковых движков
+- Все конфигурация в YAML-файле
+- Поиск в истории браузера, закладках, списке недавно закрытых вкладок
+- Поиск по сохраненным ссылкам и алиасам на них
+- Палитра команд
+- Не требует использования мыши
+- Настраиваемые горячие клавиши
+- Минималистичный
+- Использует Nerd Fonts
 
-## Preview
+## Галерея
 
-![Preview](.github/preview.png?raw=true)
-![Searching Preview](.github/searching.png?raw=true)
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  <img src=".github/dashboard.png?raw=true" />
+  <img src=".github/google-search.png?raw=true">
+  <img src=".github/npm-search.png?raw=true" />
+  <img src=".github/command-palette.png?raw=true" />
+</div>
 
-## Usage
+## Использование
 
-1. Download [config file](config.yaml)
-2. Edit this file
-3. Create your own github repo and upload your config
-4. Get link to uploaded config (For example: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
-5. Download extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/nerd-startpage/)
-6. Open new tab
-7. Click on the settings icon
-8. Enter the link you received in step 4
-9. Click on the reload icon
+1. Установите расширение [Firefox](https://addons.mozilla.org/en-US/firefox/addon/nerd-startpage/)
+2. Скачайте [config file](config.yaml)
+3. Замените данные на свои
+4. Опубликуйте `config.yaml` на Github Gist, Pastebin или любой другой платформе, где можно получить ссылку на `raw` формат.
+5. Скопируйте ссылку на `raw` формат (Для примера: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
+6. Нажмите комбинацию `Alt + T`, чтобы открыть Nerd Startpage
+7. Нажмите комбинацию `CTrl + P`, чтобы открыть палитру команд
+8. Выберите команду `Set config URL from clipboard`
+9. Перезагрузите конфиг командой `Reload config`
 
-## Shortcuts
+## Горячие клавиши по умолчанию
 
-You can use shortcuts by adding a colon to the beginning. For example, by typing `:gh` and pressing `Enter` you can open project's Github repository. The list of links can be changed in the file `config.yaml`:
+| Название                           | Комбинация |
+| ---------------------------------- | ---------- |
+| Открыть Nerd Startpage             | `Alt + T`  |
+| Открыть палитру команд             | `Ctrl + P` |
+| Поиск в Google                     | `Ctrl + G` |
+| Поиск в Yandex                     | `Ctrl + Y` |
+| Поиск по истории                   | `Ctrl + H` |
+| Поиск по закладкам                 | `Ctrl + B` |
+| Поиск по недавно закрытым вкладкам | `Ctrl + S` |
+| Поиск по ссылкам и алиасам         | `Ctrl + F` |
+| Очистить поле ввода                | `Ctrl + L` |
+| Открыть ссылку из буфера обмена    | `Ctrl + O` |
 
-## Production
+### Навигация по подсказкам
+
+| Название                         | Комбинация     |
+| -------------------------------- | -------------- |
+| Предыдущая подсказка             | `Arrow Up`     |
+| Следующая подсказка              | `Arrow Down`   |
+| Скрыть/показать панель подсказок | `Escape`       |
+| Открыть ссылку в текущей вкладке | `Enter`        |
+| Открыть ссылку в новой вкладке   | `Ctrl + Enter` |
+
+## Продакшн
 
 Build extension using `npm run build` command. Then go to <https://addons.mozilla.org/en-US/developers/> and sign the extension
 
-## Development
+## Разработка
 
-Start extension using `npm run dev` command. Then open <about:debugging#/runtime/this-firefox> and load the addon by clicking "Load Temporary Add-on"
+```sh
+# Установка зависимостей
+npm install
+
+# Запуск в режиме разработки
+npm run dev
+
+# Запуск Firefox для разработки
+npm run firefox
+
+# Запуск витрины компонентов в режиме разработки
+npm run storybook
+
+# Запустить все команды разом можно с помощью Taskfile
+task dev
+```

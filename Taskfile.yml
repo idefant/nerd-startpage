@@ -1,0 +1,20 @@
+version: '3'
+
+output: prefixed
+
+tasks:
+  dev:
+    desc: Запуск в режиме разработки
+    deps: [dev-frontend, dev-storybook, dev-firefox]
+
+  dev-frontend:
+    desc: Запуск фронтенда в режиме разработки
+    cmd: npm run dev
+
+  dev-storybook:
+    desc: Запуск Storybook в режиме разработки
+    cmd: npm run storybook
+
+  dev-firefox:
+    desc: Запуск Firefox в режиме разработки
+    cmd: npm run firefox

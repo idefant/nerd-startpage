@@ -1,0 +1,11 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "plugins": ["stylelint-declaration-block-no-ignored-properties"],
+  "rules": {
+    "selector-class-pattern": "[A-Za-z]+",
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["global"] }],
+    "scss/at-rule-no-unknown": true,
+    "plugin/declaration-block-no-ignored-properties": true,
+    "media-feature-range-notation": "prefix"
+  }
+}

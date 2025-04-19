@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 (async () => {
   const tab = browser.tabs.getCurrent();
   browser.tabs.create({ url: browser.runtime.getURL('index.html') });

@@ -1,51 +1,56 @@
-hotkeyLeader: ':'
-
 columns:
-  gap: 20
-  width: 200
+  gap: 24
+  width: 220
   maxCount: 6
 
 mappings:
-  suggestionNext: ['ctrl+j', 'ArrowDown']
-  suggestionPrev: ['ctrl+k', 'ArrowUp']
-  showSearch: ['ctrl+s']
-  showHistory: ['ctrl+h']
-  showBookmarks: ['ctrl+b']
+  nextSuggestion: ['ArrowDown']
+  prevSuggestion: ['ArrowUp']
+  searchOnGoogle: ['ctrl+g']
+  searchOnYandex: ['ctrl+y']
+  searchOnNpm: []
+  searchInHistory: ['ctrl+h']
+  searchInBookmarks: ['ctrl+b']
+  searchInSessions: ['ctrl+s']
+  searchInLinks: ['ctrl+f']
+  commandPalette: ['ctrl+p']
+  clearInput: ['ctrl+l']
+  openLinkFromClipboard: []
+  openGoogle: []
+  openYandex: []
+  searchOnGoogleFromClipboard: []
+  searchOnYandexFromClipboard: []
+  editConfig: []
+  showConfig: []
+  reloadConfig: []
+  setConfigUrlFromClipboard: []
+  showMyIP: []
 
 categories:
-  - name: About_Project
+  - name:  About_Project
     links:
-      - { name: Repo, url: https://github.com/idefant/nerd-startpage, hotkey: gh }
-      - { name: My_Github_Profile, url: https://github.com/idefant }
-      - { name: My_Website, url: https://idefant.ru }
-  - name: Social
+      - { name: Repo, icon: , url: https://github.com/idefant/nerd-startpage, alias: gh }
+      - { name: My_Github_Profile, icon: , url: https://github.com/idefant }
+      - { name: My_Website, icon: 󰖟, url: https://idefant.ru }
+  - name:  Social
     links:
-      - { name: Telegram, url: web.telegram.org/, hotkey: tg }
-      - { name: Youtube, url: https://youtube.com/, hotkey: yt }
-      - { name: Gmail, url: https://mail.google.com/, hotkey: gm }
-      - { name: LinkedIn, url: linkedin.com, hotkey: li }
-      - { name: WhatsApp, url: https://web.whatsapp.com/, hotkey: wa }
-  - name: Code
+      - { name: Telegram, icon: , url: web.telegram.org/, alias: tg }
+      - { name: Youtube, icon: , url: https://youtube.com/, alias: yt }
+      - { name: Gmail, icon: 󰊫, url: https://mail.google.com/, alias: gm }
+      - { name: LinkedIn, icon: , url: linkedin.com, alias: li }
+      - { name: WhatsApp, icon: , url: https://web.whatsapp.com/, alias: wa }
+  - name:  Code
     links:
-      - { name: BundlePhobia, url: https://bundlephobia.com/, hotkey: bp }
-      - { name: CanInlude, url: https://caninclude.glitch.me/, hotkey: ci }
-      - { name: CanIUse, url: https://caniuse.com/, hotkey: cu }
-      - { name: NPM, url: https://www.npmjs.com/, hotkey: npm }
-      - { name: Tailwind, url: https://tailwindcss.com/, hotkey: tw }
-      - { name: Codewars, url: https://www.codewars.com, hotkey: cw }
-      - { name: Colab, url: https://colab.research.google.com/ }
-  - name: Tools
+      - { name: NPM, icon: , url: https://www.npmjs.com/, alias: npm }
+      - { name: BundlePhobia, icon: , url: https://bundlephobia.com/, alias: bp }
+      - { name: CanInclude, url: https://caninclude.glitch.me/, alias: ci }
+      - { name: CanIUse, url: https://caniuse.com/, alias: cu }
+      - { name: Tailwind, icon: 󱏿, url: https://tailwindcss.com/, alias: tw }
+      - { name: Codewars, icon: 󰅩, url: https://www.codewars.com, alias: cw }
+  - name: 󱁤 Tools
     links:
-      - { name: Excalidraw, url: https://excalidraw.com, hotkey: ew }
-      - { name: Pendulums, url: https://app.pendulums.io/dashboard, hotkey: pd }
-      - { name: SnapDrop, url: https://snapdrop.net/, hotkey: sd }
-      - { name: ShareDrop, url: https://www.sharedrop.io/ }
-      - { name: GDrive, url: https://drive.google.com/ }
-  - name: Selfhosted
+      - { name: Excalidraw, icon: 󰽉, url: https://excalidraw.com, alias: ew }
+      - { name: GDrive, icon: , url: https://drive.google.com/ }
+  - name:  Music
     links:
-      - { name: Nextcloud, url: https://nextcloud.com/, hotkey: nc }
-      - { name: AdGuard, url: https://adguard.com/en/adguard-home/overview.html }
-      - { name: Traefik, url: https://traefik.io/ }
-  - name: Music
-    links:
-      - { name: Music_For_Programming, url: https://musicforprogramming.net/, hotkey: mp }
+      - { name: Music_For_Programming, url: https://musicforprogramming.net/, alias: mp }
