@@ -178,7 +178,7 @@ export const DashboardPage: FC = () => {
   const npmSuggestions = useNpmSuggestions(debouncedQuery, mode === 'searchOnNpm');
   const historySuggestions = useHistorySuggestions(query, mode === 'searchInHistory');
   const bookmarkSuggestions = useBookmarkSuggestions(query, mode === 'searchInBookmarks');
-  const sessionSuggestions = useSessionSuggestions(mode === 'searchInSessions');
+  const sessionSuggestions = useSessionSuggestions(query, mode === 'searchInSessions');
   const linkSuggestions = useLinkSuggestions(query, mode === 'searchInLinks');
 
   const focusInput = useCallback(() => inputRef.current?.focus(), []);
