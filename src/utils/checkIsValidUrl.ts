@@ -1,3 +1,5 @@
+import { parse } from 'tldts';
+
 export const checkIsValidUrl = (
   str: string,
   strict?: boolean,
@@ -20,6 +22,11 @@ export const checkIsValidUrl = (
   const isValid = pattern.test(str);
 
   if (!isValid) {
+    return { success: false };
+  }
+
+  const parsedDomain = parse(str, { validHosts: ['localhost'] });
+  if (!(parsedDomain.isIcann || parsedDomain.isIp || parsedDomain.hostname === 'localhost')) {
     return { success: false };
   }
 

@@ -5,6 +5,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
 
 import { useLazyFetchConfigQuery, useLazyFetchMyIpQuery } from '#api/mainApi';
+import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useAppDispatch, useAppSelector } from '#hooks/reduxHooks';
 import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
@@ -178,7 +179,7 @@ export const DashboardPage: FC = () => {
   const npmSuggestions = useNpmSuggestions(debouncedQuery, mode === 'searchOnNpm');
   const historySuggestions = useHistorySuggestions(query, mode === 'searchInHistory');
   const bookmarkSuggestions = useBookmarkSuggestions(query, mode === 'searchInBookmarks');
-  const sessionSuggestions = useSessionSuggestions(mode === 'searchInSessions');
+  const sessionSuggestions = useSessionSuggestions(query, mode === 'searchInSessions');
   const linkSuggestions = useLinkSuggestions(query, mode === 'searchInLinks');
 
   const focusInput = useCallback(() => inputRef.current?.focus(), []);
@@ -382,15 +383,71 @@ export const DashboardPage: FC = () => {
   useEffect(() => handleShowBackdropIfNeed(), [handleShowBackdropIfNeed]);
 
   // === Navigation Hotkeys ===
-  const upRef = useHotkeys<HTMLDivElement>(
+  const prevSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.prevSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
-  const downRef = useHotkeys<HTMLDivElement>(
+  const nextSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.nextSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
+  );
+  const enterRef = useHotkeys<HTMLInputElement>(
+    'Enter, Ctrl+Enter, Alt+Enter, Alt+Ctrl+Enter',
+    (e) => {
+      if (activeSuggestionIndex !== -1) {
+        const suggestion = suggestions[activeSuggestionIndex];
+        suggestion.onClick?.(e);
+        return;
+      }
+      if (!query) return;
+
+      if (mode === 'searchOnGoogle') {
+        const urlValidationResult = checkIsValidUrl(query);
+        if (urlValidationResult.success) {
+          openUrl(urlValidationResult.url, e.ctrlKey);
+          return;
+        }
+        const url = getGoogleSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchOnYandex') {
+        const urlValidationResult = checkIsValidUrl(query);
+        if (urlValidationResult.success) {
+          openUrl(urlValidationResult.url, e.ctrlKey);
+          return;
+        }
+        const url = getYandexSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchOnNpm') {
+        const url = getNpmSearchUrl(query);
+        openUrl(url, e.ctrlKey);
+        return;
+      }
+      if (mode === 'searchInLinks') {
+        const links = (config?.categories || []).flatMap((category) => category.links);
+        const foundLink = links.find((link) => link.alias === query.trim());
+        if (!foundLink) return;
+        openUrl(foundLink.url, e.ctrlKey);
+        return;
+      }
+    },
+    hotkeyHookConfig,
+  );
+  const continueFromRef = useHotkeys<HTMLInputElement>(
+    'Tab',
+    () => {
+      if (!(mode === 'searchOnGoogle' || mode === 'searchOnYandex') || activeSuggestionIndex === -1)
+        return;
+      const suggestion = suggestions[activeSuggestionIndex];
+      if (!suggestion.title) return;
+      setQuery(`${suggestion.title} `);
+    },
+    hotkeyHookConfig,
   );
   useHotkeys(
     'Esc',
@@ -402,90 +459,51 @@ export const DashboardPage: FC = () => {
         handleShowBackdropIfNeed();
       }
     },
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
 
   // === Mode Hotkeys ===
-  useHotkeys(hotkeys.searchOnGoogle, () => setMode('searchOnGoogle'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchOnYandex, () => setMode('searchOnYandex'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchOnNpm, () => setMode('searchOnNpm'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInBookmarks, () => setMode('searchInBookmarks'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInLinks, () => setMode('searchInLinks'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.commandPalette, () => setMode('commandPalette'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.searchOnGoogle, () => setMode('searchOnGoogle'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchOnYandex, () => setMode('searchOnYandex'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchOnNpm, () => setMode('searchOnNpm'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInBookmarks, () => setMode('searchInBookmarks'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInLinks, () => setMode('searchInLinks'), hotkeyHookConfig);
+  useHotkeys(hotkeys.commandPalette, () => setMode('commandPalette'), hotkeyHookConfig);
 
   // === Other Hotkeys ===
-  useHotkeys(hotkeys.clearInput, () => setQuery('', true), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openLinkFromClipboard, commandsMap.openLinkFromClipboard.onAction, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openGoogle, (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openYandex, (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.clearInput, () => setQuery('', true), hotkeyHookConfig);
+  useHotkeys(
+    hotkeys.openLinkFromClipboard,
+    commandsMap.openLinkFromClipboard.onAction,
+    hotkeyHookConfig,
+  );
+  useHotkeys(
+    hotkeys.openGoogle,
+    (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey),
+    hotkeyHookConfig,
+  );
+  useHotkeys(
+    hotkeys.openYandex,
+    (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey),
+    hotkeyHookConfig,
+  );
   useHotkeys(
     hotkeys.searchOnGoogleFromClipboard,
     commandsMap.searchOnGoogleFromClipboard.onAction,
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   useHotkeys(
     hotkeys.searchOnYandexFromClipboard,
     commandsMap.searchOnYandexFromClipboard.onAction,
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
-  useHotkeys(hotkeys.showConfig, handleShowConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.editConfig, handleEditConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.showMyIP, handleShowIP, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.showConfig, handleShowConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.editConfig, handleEditConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, hotkeyHookConfig);
+  useHotkeys(hotkeys.showMyIP, handleShowIP, hotkeyHookConfig);
 
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -495,59 +513,9 @@ export const DashboardPage: FC = () => {
     [setQuery],
   );
 
-  const handleKeyDownInInput = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (['ArrowUp', 'ArrowDown', 'Enter'].includes(e.code)) {
-        e.preventDefault();
-      }
-      if (e.code === 'Enter') {
-        if (activeSuggestionIndex === -1) {
-          if (query) {
-            if (mode === 'searchOnGoogle') {
-              const urlValidationResult = checkIsValidUrl(query);
-              if (urlValidationResult.success) {
-                openUrl(urlValidationResult.url, e.ctrlKey);
-                return;
-              }
-              const url = getGoogleSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchOnYandex') {
-              const urlValidationResult = checkIsValidUrl(query);
-              if (urlValidationResult.success) {
-                openUrl(urlValidationResult.url, e.ctrlKey);
-                return;
-              }
-              const url = getYandexSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchOnNpm') {
-              const url = getNpmSearchUrl(query);
-              openUrl(url, e.ctrlKey);
-              return;
-            }
-            if (mode === 'searchInLinks') {
-              const links = (config?.categories || []).flatMap((category) => category.links);
-              const foundLink = links.find((link) => link.alias === query.trim());
-              if (!foundLink) return;
-              openUrl(foundLink.url, e.ctrlKey);
-              return;
-            }
-          }
-        } else {
-          const suggestion = suggestions[activeSuggestionIndex];
-          suggestion.onClick?.(e);
-        }
-      }
-    },
-    [activeSuggestionIndex, config?.categories, mode, query, suggestions],
-  );
-
   return (
     <div className={cls.container}>
-      <div className={cls.search} ref={mergeRefs(upRef, downRef)}>
+      <div className={cls.search}>
         <div className={cls.inputBox}>
           <div className={cls.inputIcon}>{commandsMap[mode].icon}</div>
           <input
@@ -556,14 +524,19 @@ export const DashboardPage: FC = () => {
             autoFocus
             value={query}
             onChange={handleChangeInputValue}
-            onKeyDown={handleKeyDownInInput}
             onClick={handleShowBackdropIfNeed}
-            ref={inputRef}
+            ref={mergeRefs(
+              inputRef,
+              prevSuggestionRef,
+              nextSuggestionRef,
+              enterRef,
+              continueFromRef,
+            )}
           />
         </div>
         <div
           className={classNames(cls.inputSuggestions, {
-            [cls.inputSuggestionsHidden]: !hasBackdrop || suggestions.length === 0,
+            [cls.inputSuggestionsVisible]: hasBackdrop && suggestions.length !== 0,
           })}
           ref={suggestionsRef}
         >
@@ -590,7 +563,7 @@ export const DashboardPage: FC = () => {
       />
 
       <div
-        className={classNames(cls.backdrop, { [cls.backdropHidden]: !hasBackdrop })}
+        className={classNames(cls.backdrop, { [cls.backdropVisible]: hasBackdrop })}
         onClick={() => setHasBackdrop(false)}
       />
     </div>

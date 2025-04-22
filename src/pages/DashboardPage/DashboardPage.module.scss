@@ -37,7 +37,7 @@
   }
 
   &Suggestions {
-    display: block;
+    display: none;
     position: absolute;
     background-color: var(--bg-paper);
     width: 100%;
@@ -46,10 +46,6 @@
     box-sizing: border-box;
     max-height: calc(100vh - 140px);
     overflow-y: auto;
-
-    &Hidden {
-      display: none;
-    }
   }
 }
 
@@ -96,9 +92,17 @@
   background-color: #20202037;
   backdrop-filter: blur(4px);
   transition: 0.1s opacity;
+  pointer-events: none;
+  opacity: 0;
+}
 
-  &Hidden {
-    pointer-events: none;
-    opacity: 0;
+body:focus-within {
+  .inputSuggestionsVisible {
+    display: block;
+  }
+
+  .backdropVisible {
+    opacity: 1;
+    pointer-events: unset;
   }
 }
