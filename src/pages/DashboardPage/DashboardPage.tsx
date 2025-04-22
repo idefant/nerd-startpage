@@ -5,6 +5,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'react-toastify';
 
 import { useLazyFetchConfigQuery, useLazyFetchMyIpQuery } from '#api/mainApi';
+import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useAppDispatch, useAppSelector } from '#hooks/reduxHooks';
 import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
@@ -385,12 +386,12 @@ export const DashboardPage: FC = () => {
   const prevSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.prevSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   const nextSuggestionRef = useHotkeys<HTMLInputElement>(
     hotkeys.nextSuggestion,
     () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   const enterRef = useHotkeys<HTMLInputElement>(
     'Enter, Ctrl+Enter, Alt+Enter, Alt+Ctrl+Enter',
@@ -435,7 +436,7 @@ export const DashboardPage: FC = () => {
         return;
       }
     },
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   const continueFromRef = useHotkeys<HTMLInputElement>(
     'Tab',
@@ -446,7 +447,7 @@ export const DashboardPage: FC = () => {
       if (!suggestion.title) return;
       setQuery(`${suggestion.title} `);
     },
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   useHotkeys(
     'Esc',
@@ -458,90 +459,51 @@ export const DashboardPage: FC = () => {
         handleShowBackdropIfNeed();
       }
     },
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
 
   // === Mode Hotkeys ===
-  useHotkeys(hotkeys.searchOnGoogle, () => setMode('searchOnGoogle'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchOnYandex, () => setMode('searchOnYandex'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchOnNpm, () => setMode('searchOnNpm'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInBookmarks, () => setMode('searchInBookmarks'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.searchInLinks, () => setMode('searchInLinks'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.commandPalette, () => setMode('commandPalette'), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.searchOnGoogle, () => setMode('searchOnGoogle'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchOnYandex, () => setMode('searchOnYandex'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchOnNpm, () => setMode('searchOnNpm'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInHistory, () => setMode('searchInHistory'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInBookmarks, () => setMode('searchInBookmarks'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInSessions, () => setMode('searchInSessions'), hotkeyHookConfig);
+  useHotkeys(hotkeys.searchInLinks, () => setMode('searchInLinks'), hotkeyHookConfig);
+  useHotkeys(hotkeys.commandPalette, () => setMode('commandPalette'), hotkeyHookConfig);
 
   // === Other Hotkeys ===
-  useHotkeys(hotkeys.clearInput, () => setQuery('', true), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openLinkFromClipboard, commandsMap.openLinkFromClipboard.onAction, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openGoogle, (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.openYandex, (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey), {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.clearInput, () => setQuery('', true), hotkeyHookConfig);
+  useHotkeys(
+    hotkeys.openLinkFromClipboard,
+    commandsMap.openLinkFromClipboard.onAction,
+    hotkeyHookConfig,
+  );
+  useHotkeys(
+    hotkeys.openGoogle,
+    (e) => openUrl(commandsMap.openGoogle.url, e?.ctrlKey),
+    hotkeyHookConfig,
+  );
+  useHotkeys(
+    hotkeys.openYandex,
+    (e) => openUrl(commandsMap.openYandex.url, e?.ctrlKey),
+    hotkeyHookConfig,
+  );
   useHotkeys(
     hotkeys.searchOnGoogleFromClipboard,
     commandsMap.searchOnGoogleFromClipboard.onAction,
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
   useHotkeys(
     hotkeys.searchOnYandexFromClipboard,
     commandsMap.searchOnYandexFromClipboard.onAction,
-    { enableOnFormTags: ['input'], preventDefault: true },
+    hotkeyHookConfig,
   );
-  useHotkeys(hotkeys.showConfig, handleShowConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.editConfig, handleEditConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
-  useHotkeys(hotkeys.showMyIP, handleShowIP, {
-    enableOnFormTags: ['input'],
-    preventDefault: true,
-  });
+  useHotkeys(hotkeys.showConfig, handleShowConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.editConfig, handleEditConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, hotkeyHookConfig);
+  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, hotkeyHookConfig);
+  useHotkeys(hotkeys.showMyIP, handleShowIP, hotkeyHookConfig);
 
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
