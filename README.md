@@ -27,7 +27,7 @@ Nerd Startpage - стартовая страница браузера, кото�
 
 ## Использование
 
-1. Установите расширение [Firefox](https://addons.mozilla.org/en-US/firefox/addon/nerd-startpage/)
+1. Установите расширение для [Firefox](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-*.xpi`)
 2. Скачайте [config file](config.yaml)
 3. Замените данные на свои
 4. Опубликуйте `config.yaml` на Github Gist, Pastebin или любой другой платформе, где можно получить ссылку на `raw` формат.
