@@ -46,7 +46,6 @@ const commandKeys = [
 
 type CommandKey = (typeof commandKeys)[number];
 
-/* eslint-disable no-unused-vars */
 type Command = {
   title: string;
   hotkey?: string;
@@ -79,7 +78,6 @@ type Command = {
         }
     ))
 );
-/* eslint-enable no-unused-vars */
 
 const commandsMap = {
   searchOnGoogle: { title: 'Search on Google', hotkey: 'ctrl+g', isMode: true, icon: '' },

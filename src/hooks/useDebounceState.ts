@@ -7,7 +7,6 @@ export const useDebounceState = <T>(initialValue: T, delay: number) => {
   const timer = useRef<NodeJS.Timeout | null>(null);
 
   const handleChange = useCallback(
-    // eslint-disable-next-line no-unused-vars
     (value: T | ((value: T) => T), immediately?: boolean) => {
       if (timer.current) {
         clearTimeout(timer.current);
