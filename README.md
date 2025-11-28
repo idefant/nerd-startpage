@@ -64,9 +64,14 @@ Nerd Startpage - стартовая страница браузера, кото�
 
 ## Продакшн
 
+### Firefox
+
 Mozilla [Developer Hub](https://addons.mozilla.org/en-US/developers/)
 
 ```sh
+# Установка манифеста для Firefox
+task set-manifest-firefox
+
 # Сборка проекта
 npm run build
 
@@ -82,6 +87,16 @@ npx web-ext sign \
   --artifacts-dir=build/
 ```
 
+### Chrome
+
+```sh
+# Установка манифеста для Chrome
+task set-manifest-chrome
+
+# Сборка проекта
+npm run build
+```
+
 ## Разработка
 
 ```sh
@@ -92,11 +107,17 @@ npm install
 npm run dev
 
 # Запуск Firefox для разработки
-npm run firefox
+task dev-firefox
+
+# Запуск Chrome для разработки
+task dev-chrome
 
 # Запуск витрины компонентов в режиме разработки
 npm run storybook
-
-# Запустить все команды разом можно с помощью Taskfile
-task dev
 ```
+
+## Технические особенности
+
+### Манифест
+
+Chrome и Firefox требуют манифеста в разных форматах. При запуске через команды `task dev-firefox` или `task dev-chrome` сначала копируется манифест в папку `/public`, а затем уже идет сборка. Следствие: нельзя одновременно запустить Firefox и Chrome в режиме разработки.

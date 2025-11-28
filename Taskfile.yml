@@ -3,9 +3,21 @@ version: '3'
 output: prefixed
 
 tasks:
-  dev:
-    desc: Запуск в режиме разработки
-    deps: [dev-frontend, dev-storybook, dev-firefox]
+  dev-firefox:
+    desc: Запуск в режиме разработки (Firefox)
+    deps: [set-manifest-firefox, dev-frontend, run-firefox]
+
+  dev-chrome:
+    desc: Запуск в режиме разработки (Chrome/Chromium)
+    deps: [set-manifest-chrome, dev-frontend, run-chrome]
+
+  set-manifest-firefox:
+    desc: Копирование манифеста для Firefox
+    cmd: node scripts/set-manifest.mjs firefox
+
+  set-manifest-chrome:
+    desc: Копирование манифеста для Chrome
+    cmd: node scripts/set-manifest.mjs chrome
 
   dev-frontend:
     desc: Запуск фронтенда в режиме разработки
@@ -15,6 +27,10 @@ tasks:
     desc: Запуск Storybook в режиме разработки
     cmd: npm run storybook
 
-  dev-firefox:
-    desc: Запуск Firefox в режиме разработки
-    cmd: npm run firefox
+  run-firefox:
+    desc: Run Firefox via web-ext
+    cmd: npx web-ext run --source-dir=dist --firefox=firefox
+
+  run-chrome:
+    desc: Run Chromium via web-ext
+    cmd: npx web-ext run --source-dir=dist --target=chromium
