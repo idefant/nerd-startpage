@@ -158,16 +158,16 @@ const commands = commandKeys.map((commandKey) => ({
 })) as any as Commands;
 
 export const DashboardPage: FC = () => {
-  const [mode, setMode] = useState<Mode>(defaultMode);
+  const dispatch = useAppDispatch();
+  const { configUrl, config } = useAppSelector((state) => state.config);
+
+  const [mode, setMode] = useState<Mode>(config?.defaultMode ?? defaultMode);
   const [query, debouncedQuery, setQuery] = useDebounceState('', 300);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(-1);
   const [hasBackdrop, setHasBackdrop] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-
-  const dispatch = useAppDispatch();
-  const { configUrl, config } = useAppSelector((state) => state.config);
 
   const [reloadConfig] = useLazyFetchConfigQuery();
   const [fetchIP] = useLazyFetchMyIpQuery();
@@ -214,13 +214,16 @@ export const DashboardPage: FC = () => {
     [config?.editConfigUrl, handleShowConfig],
   );
 
-  const handleReloadConfig = useCallback(() => {
-    if (!configUrl) {
-      toast.error('Config URL is empty');
-      return;
-    }
-    reloadConfig({ configUrl });
-  }, [configUrl, reloadConfig]);
+  const handleReloadConfig = useCallback(
+    (url = configUrl) => {
+      if (!url) {
+        toast.error('Config URL is empty');
+        return;
+      }
+      reloadConfig({ configUrl: url });
+    },
+    [configUrl, reloadConfig],
+  );
 
   const handleSetConfigUrlFromClipboard = useCallback(async () => {
     const url = await getTextFromClipboard();
@@ -232,7 +235,8 @@ export const DashboardPage: FC = () => {
     }
     toast.success('Config URL was successfully added');
     dispatch(setConfigUrl(urlValidationResult.url));
-  }, [dispatch]);
+    handleReloadConfig(urlValidationResult.url);
+  }, [dispatch, handleReloadConfig]);
 
   const handleShowIP = useCallback(async () => {
     const res = await fetchIP(undefined);
@@ -497,11 +501,15 @@ export const DashboardPage: FC = () => {
     commandsMap.searchOnYandexFromClipboard.onAction,
     hotkeyHookConfig,
   );
-  useHotkeys(hotkeys.showConfig, handleShowConfig, hotkeyHookConfig);
-  useHotkeys(hotkeys.editConfig, handleEditConfig, hotkeyHookConfig);
-  useHotkeys(hotkeys.reloadConfig, handleReloadConfig, hotkeyHookConfig);
-  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, hotkeyHookConfig);
-  useHotkeys(hotkeys.showMyIP, handleShowIP, hotkeyHookConfig);
+  useHotkeys(hotkeys.showConfig, handleShowConfig, hotkeyHookConfig, [handleShowConfig]);
+  useHotkeys(hotkeys.editConfig, handleEditConfig, hotkeyHookConfig, [handleEditConfig]);
+  useHotkeys(hotkeys.reloadConfig, () => handleReloadConfig(), hotkeyHookConfig, [
+    handleReloadConfig,
+  ]);
+  useHotkeys(hotkeys.setConfigUrlFromClipboard, handleSetConfigUrlFromClipboard, hotkeyHookConfig, [
+    handleSetConfigUrlFromClipboard,
+  ]);
+  useHotkeys(hotkeys.showMyIP, handleShowIP, hotkeyHookConfig, [handleShowIP]);
 
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 import { colorList } from '#data/color';
-import { modeList } from '#data/mode';
+import { defaultMode, modeList } from '#data/mode';
 
 export const configSchema = z.object({
   editConfigUrl: z.string().optional(),
-  defaultMode: z.enum(modeList).optional(),
+  defaultMode: z.enum(modeList).default(defaultMode),
   columns: z
     .object({
       gap: z.number().optional(),
