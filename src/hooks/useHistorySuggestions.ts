@@ -3,6 +3,7 @@ import { SetRequired } from 'type-fest';
 import browser from 'webextension-polyfill';
 
 import { Suggestion } from '#types/suggestionType';
+import { decodeUrlHuman } from '#utils/getHumanReadableUrl';
 import { openUrl } from '#utils/openUrl';
 
 type HistoryItem = browser.History.HistoryItem;
@@ -32,7 +33,7 @@ export const useHistorySuggestions = (query: string, isEnabled = true) => {
         .filter((historyItem): historyItem is SetRequired<HistoryItem, 'url'> => !!historyItem.url)
         .map((historyItem) => ({
           title: historyItem.title,
-          extra: historyItem.url,
+          extra: decodeUrlHuman(historyItem.url),
           onClick: (e) => {
             openUrl(historyItem.url, e?.ctrlKey);
           },
