@@ -1,14 +1,3 @@
-export const colorList = [
-  'white',
-  'red',
-  'orange',
-  'yellow',
-  'green',
-  'lightGreen',
-  'lightBlue',
-  'blue',
-  'violet',
-  'pink',
-] as const;
+import { colorList } from '#data/color';
 
 export type Color = (typeof colorList)[number];

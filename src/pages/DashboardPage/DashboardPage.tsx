@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 import { useLazyFetchConfigQuery, useLazyFetchMyIpQuery } from '#api/mainApi';
 import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
+import { modeList, defaultMode } from '#data/mode';
 import { useAppDispatch, useAppSelector } from '#hooks/reduxHooks';
 import { useBookmarkSuggestions } from '#hooks/useBookmarkSuggestions';
 import { useDebounceState } from '#hooks/useDebounceState';
@@ -18,7 +19,6 @@ import { useYandexSuggestions } from '#hooks/useYandexSuggestions';
 import { hotkeysCommandList } from '#schema/configSchema';
 import { setConfigUrl } from '#store/reducers/configSlice';
 import { FilterWithIsMode, ToTuple } from '#types/basicType';
-import { modeList } from '#types/modeType';
 import { Suggestion, SuggestionActionEvent } from '#types/suggestionType';
 import { CategoryGrid } from '#ui/CategoryGrid';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
@@ -158,7 +158,7 @@ const commands = commandKeys.map((commandKey) => ({
 })) as any as Commands;
 
 export const DashboardPage: FC = () => {
-  const [mode, setMode] = useState<Mode>('searchOnGoogle');
+  const [mode, setMode] = useState<Mode>(defaultMode);
   const [query, debouncedQuery, setQuery] = useDebounceState('', 300);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(-1);
   const [hasBackdrop, setHasBackdrop] = useState(false);

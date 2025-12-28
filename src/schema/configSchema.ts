@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { colorList } from '#types/colorType';
-import { modeList } from '#types/modeType';
+import { colorList } from '#data/color';
+import { modeList } from '#data/mode';
 
 export const configSchema = z.object({
   editConfigUrl: z.string().optional(),

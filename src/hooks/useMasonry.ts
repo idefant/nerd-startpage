@@ -1,7 +1,5 @@
+import { maxBy, minBy } from 'lodash-es';
 import { RefObject, useCallback, useLayoutEffect, useMemo, useState } from 'react';
-
-import { maxBy } from '#utils/maxBy';
-import { minBy } from '#utils/minBy';
 
 type ElemCoords = { index: number; width: number; height: number; top: number; left: number };
 
@@ -38,7 +36,7 @@ export const useMasonry = (
 
     const elemsLocations = elemsSizes.reduce(
       (acc, elem) => {
-        const [minColumn] = minBy(acc, (column) => column.height);
+        const minColumn = minBy(acc, (column) => column.height);
         if (!minColumn) return acc;
 
         acc[minColumn.index].elems.push({
@@ -57,7 +55,7 @@ export const useMasonry = (
       })),
     );
 
-    const [maxColumn] = maxBy(elemsLocations, (column) => column.height);
+    const maxColumn = maxBy(elemsLocations, (column) => column.height);
     const elemsListWidth = columnsCount * (columnWidth + columnGap) - columnGap;
     setElemsListSize({ width: elemsListWidth, height: maxColumn?.height || 0 });
 

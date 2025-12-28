@@ -1,12 +1,3 @@
-export const modeList = [
-  'searchOnGoogle',
-  'searchOnYandex',
-  'searchOnNpm',
-  'searchInHistory',
-  'searchInBookmarks',
-  'searchInSessions',
-  'searchInLinks',
-  'commandPalette',
-] as const;
+import { modeList } from '#data/mode';
 
 export type Mode = (typeof modeList)[number];
