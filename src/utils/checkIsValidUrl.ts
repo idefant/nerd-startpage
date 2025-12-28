@@ -26,7 +26,14 @@ export const checkIsValidUrl = (
   }
 
   const parsedDomain = parse(str, { validHosts: ['localhost'] });
-  if (!(parsedDomain.isIcann || parsedDomain.isIp || parsedDomain.hostname === 'localhost')) {
+  if (
+    !(
+      parsedDomain.isIcann ||
+      parsedDomain.isIp ||
+      parsedDomain.hostname === 'localhost' ||
+      parsedDomain.hostname?.endsWith('.localhost')
+    )
+  ) {
     return { success: false };
   }
 
