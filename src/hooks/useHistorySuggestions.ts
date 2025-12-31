@@ -23,7 +23,10 @@ export const useHistorySuggestions = (query: string, isEnabled = true) => {
         startTime: Date.now() - 365 * 24 * 60 * 60 * 1000,
         maxResults: 20,
       });
-      setHistoryList(historyList);
+      const filteredHistoryList = historyList.filter(
+        (historyItem) => !historyItem.url?.startsWith('file:///'),
+      );
+      setHistoryList(filteredHistoryList);
     })();
   }, [isEnabled, query]);
 

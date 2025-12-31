@@ -20,7 +20,10 @@ export const useBookmarkSuggestions = (query: string, isEnabled = true) => {
       const bookmarkList = query
         ? await browser.bookmarks.search(query)
         : await browser.bookmarks.getRecent(20);
-      setBookmarkList(bookmarkList);
+      const filteredBookmarkList = bookmarkList.filter(
+        (bookmark) => !bookmark.url?.startsWith('file:///'),
+      );
+      setBookmarkList(filteredBookmarkList);
     })();
   }, [isEnabled, query]);
 
