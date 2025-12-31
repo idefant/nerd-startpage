@@ -511,6 +511,20 @@ export const DashboardPage: FC = () => {
   ]);
   useHotkeys(hotkeys.showMyIP, handleShowIP, hotkeyHookConfig, [handleShowIP]);
 
+  useHotkeys(
+    'alt+e',
+    () => {
+      if (activeSuggestionIndex === -1) return;
+      if (!(mode === 'searchInHistory' || mode === 'searchInBookmarks')) return;
+      const link = suggestions[activeSuggestionIndex].extra;
+      if (!link) return;
+      setMode('searchOnGoogle');
+      setQuery(link, true);
+    },
+    hotkeyHookConfig,
+    [activeSuggestionIndex, mode, suggestions],
+  );
+
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const immediately = !e.target.value;
