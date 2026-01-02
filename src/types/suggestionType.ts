@@ -1,10 +1,8 @@
-export type SuggestionActionEvent =
-  | KeyboardEvent
-  | React.KeyboardEvent<HTMLInputElement>
-  | React.MouseEvent<HTMLButtonElement, MouseEvent>;
+import { ModifierCombo } from '#utils/modifiers';
 
 export type Suggestion = {
   title?: string;
   extra?: string;
-  onClick?: (e?: SuggestionActionEvent) => void;
+  // XXX: Добавить описание к каждой команде
+  actions?: { [key in ModifierCombo]?: () => void };
 };

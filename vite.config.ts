@@ -32,6 +32,7 @@ export default defineConfig({
       '#api': path.resolve(__dirname, './src/api'),
       '#components': path.resolve(__dirname, './src/components'),
       '#configs': path.resolve(__dirname, './src/configs'),
+      '#contexts': path.resolve(__dirname, './src/contexts'),
       '#data': path.resolve(__dirname, './src/data'),
       '#hooks': path.resolve(__dirname, './src/hooks'),
       '#modules': path.resolve(__dirname, './src/modules'),

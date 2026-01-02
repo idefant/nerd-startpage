@@ -1,20 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { SetRequired } from 'type-fest';
 import browser from 'webextension-polyfill';
 
+import { useDashboardContext } from '#contexts/DashboardContext';
 import { Suggestion } from '#types/suggestionType';
+import SuggestionList from '#ui/SuggestionList';
 
 type Session = browser.Sessions.Session;
 
-export const useSessionSuggestions = (query: string, isEnabled = true) => {
+const SessionSuggestions: FC = () => {
+  const query = useDashboardContext((ctx) => ctx.query);
+
   const [sessionList, setSessionList] = useState<Session[]>();
 
   useEffect(() => {
-    if (!isEnabled) {
-      setSessionList(undefined);
-      return;
-    }
-
     const callback = async () => {
       const sessionList = await browser.sessions.getRecentlyClosed();
       setSessionList(sessionList);
@@ -23,7 +22,7 @@ export const useSessionSuggestions = (query: string, isEnabled = true) => {
 
     browser.sessions.onChanged.addListener(callback);
     return () => browser.sessions.onChanged.removeListener(callback);
-  }, [isEnabled]);
+  }, []);
 
   const suggestions = useMemo<Suggestion[]>(
     () =>
@@ -41,13 +40,17 @@ export const useSessionSuggestions = (query: string, isEnabled = true) => {
         .map((session) => ({
           title: session.tab?.title,
           extra: session.tab?.url,
-          onClick: () => {
-            if (!session.tab.sessionId) return;
-            browser.sessions.restore(session.tab.sessionId);
+          actions: {
+            '': () => {
+              if (!session.tab.sessionId) return;
+              browser.sessions.restore(session.tab.sessionId);
+            },
           },
         })),
     [query, sessionList],
   );
 
-  return suggestions;
+  return <SuggestionList suggestions={suggestions} />;
 };
+
+export default SessionSuggestions;
