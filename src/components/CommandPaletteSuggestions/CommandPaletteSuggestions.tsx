@@ -1,96 +1,62 @@
 import { FC, useMemo, useRef } from 'react';
 
 import { useDashboardContext } from '#contexts/DashboardContext';
-import { CommandKey, commands, commandsMap } from '#data/command';
-import { useAppSelector } from '#hooks/reduxHooks';
-import { useEditConfig } from '#hooks/useEditConfig';
-import { useReloadConfig } from '#hooks/useReloadConfig';
-import { useSetConfigUrlFromClipboard } from '#hooks/useSetConfigUrlFromClipboard';
-import { useShowConfig } from '#hooks/useShowConfig';
-import { useShowIp } from '#hooks/useShowIp';
-import { hotkeysCommandList } from '#schema/configSchema';
+import { useCommands } from '#hooks/useCommands';
+import { useModes } from '#hooks/useModes';
+import { CommandName } from '#types/commandType';
 import { Suggestion } from '#types/suggestionType';
 import SuggestionList, { SuggestionListRef } from '#ui/SuggestionList';
-import { openUrl } from '#utils/openUrl';
+import { ModifiersOnlyEvent } from '#utils/modifiers';
 
-const CommandPaletteSuggestions: FC = () => {
+interface CommandPaletteSuggestionsProps {
+  commandActionsMap: Record<
+    Exclude<CommandName, 'nextSuggestion' | 'prevSuggestion'>,
+    (e: Partial<ModifiersOnlyEvent>) => void
+  >;
+}
+
+const CommandPaletteSuggestions: FC<CommandPaletteSuggestionsProps> = ({ commandActionsMap }) => {
   const query = useDashboardContext((ctx) => ctx.query);
-  const setQuery = useDashboardContext((ctx) => ctx.setQuery);
   const setMode = useDashboardContext((ctx) => ctx.setMode);
 
   const suggestionListRef = useRef<SuggestionListRef>(null);
 
-  const { config } = useAppSelector((state) => state.config);
+  const { modesInCommandPalette } = useModes();
+  const { commandsInCommandPalette } = useCommands();
 
-  const handleShowConfig = useShowConfig();
-  const handleEditConfig = useEditConfig();
-  const handleReloadConfig = useReloadConfig();
-  const handleSetConfigUrlFromClipboard = useSetConfigUrlFromClipboard();
-  const handleShowIP = useShowIp();
-
-  // XXX: Вынести в централизованный список хоткеев
-  const hotkeys = useMemo(
+  const modeSuggestions: Suggestion[] = useMemo(
     () =>
-      Object.fromEntries(
-        hotkeysCommandList.map((commandKey) => {
-          if (config?.mappings?.[commandKey]) {
-            return [commandKey, config?.mappings?.[commandKey]];
-          }
-          if (commandKey in commandsMap && 'hotkey' in commandsMap[commandKey as CommandKey]) {
-            return [commandKey, (commandsMap[commandKey as CommandKey] as any).hotkey as string];
-          }
-          if (commandKey === 'prevSuggestion') {
-            return [commandKey, 'ArrowUp'];
-          }
-          if (commandKey === 'nextSuggestion') {
-            return [commandKey, 'ArrowDown'];
-          }
-          return [commandKey, []];
+      modesInCommandPalette
+        .filter((mode) => (query ? mode.title.toLowerCase().includes(query.toLowerCase()) : true))
+        .map((mode) => {
+          const extra = typeof mode.hotkey === 'string' ? mode.hotkey : mode.hotkey.join(', ');
+          return {
+            title: mode.title,
+            extra,
+            actions: {
+              '': () => setMode(mode.key),
+            },
+          };
         }),
-      ) as Record<(typeof hotkeysCommandList)[number], string | string[]>,
-    [config?.mappings],
+    [modesInCommandPalette, query, setMode],
   );
 
-  const commandPaletteSuggestions: Suggestion[] = useMemo(
+  const commandSuggestions: Suggestion[] = useMemo(
     () =>
-      commands
-        .filter((command) => !('hideInCommandPalette' in command && command.hideInCommandPalette))
+      commandsInCommandPalette
         .filter((command) =>
           query ? command.title.toLowerCase().includes(query.toLowerCase()) : true,
         )
         .map((command) => {
-          const hotkeysList = hotkeys[command.key];
-          const extra = (() => {
-            if (typeof hotkeysList === 'string') {
-              return hotkeysList;
-            }
-            if (hotkeysList.length === 0) return undefined;
-            return hotkeysList.join(', ');
-          })();
+          const extra =
+            typeof command.hotkey === 'string' ? command.hotkey : command.hotkey.join(', ');
 
           const applySuggestion = (options?: { newTab?: boolean }) => {
-            if ('isMode' in command && command.isMode) {
-              setQuery('', true);
-              setMode(command.key);
-              return;
-            }
-            if ('url' in command && command.url) {
-              openUrl(command.url, options?.newTab);
-              return;
-            }
-            if ('onAction' in command) {
-              command.onAction();
-              return;
-            }
-            if ('other' in command && !('hideInCommandPalette' in command)) {
-              ({
-                showConfig: () => handleShowConfig({ newTab: options?.newTab }),
-                editConfig: () => handleEditConfig({ newTab: options?.newTab }),
-                reloadConfig: handleReloadConfig,
-                setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
-                showMyIP: handleShowIP,
-              })[command.key]();
-            }
+            ({
+              nextSuggestion: () => {},
+              prevSuggestion: () => {},
+              ...commandActionsMap,
+            })[command.key]({ ctrlKey: options?.newTab });
           };
 
           return {
@@ -102,20 +68,15 @@ const CommandPaletteSuggestions: FC = () => {
             },
           };
         }),
-    [
-      handleEditConfig,
-      handleReloadConfig,
-      handleSetConfigUrlFromClipboard,
-      handleShowConfig,
-      handleShowIP,
-      hotkeys,
-      query,
-      setQuery,
-      setMode,
-    ],
+    [commandsInCommandPalette, query, commandActionsMap],
   );
 
-  return <SuggestionList suggestions={commandPaletteSuggestions} ref={suggestionListRef} />;
+  return (
+    <SuggestionList
+      suggestions={[...modeSuggestions, ...commandSuggestions]}
+      ref={suggestionListRef}
+    />
+  );
 };
 
 export default CommandPaletteSuggestions;

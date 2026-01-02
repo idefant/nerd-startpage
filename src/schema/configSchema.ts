@@ -1,63 +1,89 @@
 import { z } from 'zod';
 
 import { colorList } from '#data/color';
-import { defaultMode, modeList } from '#data/mode';
 
-export const configSchema = z.object({
-  editConfigUrl: z.string().optional(),
-  defaultMode: z.enum(modeList).default(defaultMode),
-  columns: z
+const genModeCommandSchema = (options?: {
+  hotkey?: string | string[];
+  /** @default true */
+  showInCommandPalette?: boolean;
+  /** @default false */
+  disabled?: boolean;
+}) =>
+  z
     .object({
-      gap: z.number().optional(),
-      width: z.number().optional(),
-      maxCount: z.number().optional(),
+      hotkey: z
+        .string()
+        .or(z.array(z.string()))
+        .default(options?.hotkey ?? []),
+      showInCommandPalette: z.boolean().default(options?.showInCommandPalette ?? true),
+      disabled: z.boolean().default(options?.disabled ?? false),
     })
-    .optional(),
+    .prefault({});
 
-  mappings: z
-    .object({
-      nextSuggestion: z.array(z.string()).optional(),
-      prevSuggestion: z.array(z.string()).optional(),
-      searchOnGoogle: z.array(z.string()).optional(),
-      searchOnYandex: z.array(z.string()).optional(),
-      searchOnNpm: z.array(z.string()).optional(),
-      searchInHistory: z.array(z.string()).optional(),
-      searchInBookmarks: z.array(z.string()).optional(),
-      searchInSessions: z.array(z.string()).optional(),
-      searchInLinks: z.array(z.string()).optional(),
-      commandPalette: z.array(z.string()).optional(),
-      clearInput: z.array(z.string()).optional(),
-      openLinkFromClipboard: z.array(z.string()).optional(),
-      openGoogle: z.array(z.string()).optional(),
-      openYandex: z.array(z.string()).optional(),
-      searchOnGoogleFromClipboard: z.array(z.string()).optional(),
-      searchOnYandexFromClipboard: z.array(z.string()).optional(),
-      editConfig: z.array(z.string()).optional(),
-      showConfig: z.array(z.string()).optional(),
-      reloadConfig: z.array(z.string()).optional(),
-      setConfigUrlFromClipboard: z.array(z.string()).optional(),
-      showMyIP: z.array(z.string()).optional(),
-    })
-    .optional(),
+export const modesSchema = z
+  .object({
+    google: genModeCommandSchema({ hotkey: 'ctrl+g' }),
+    yandex: genModeCommandSchema({ hotkey: 'ctrl+y' }),
+    npm: genModeCommandSchema({ showInCommandPalette: false }),
+    history: genModeCommandSchema({ hotkey: 'ctrl+h' }),
+    bookmarks: genModeCommandSchema({ hotkey: 'ctrl+b' }),
+    sessions: genModeCommandSchema({ hotkey: 'ctrl+s' }),
+    links: genModeCommandSchema({ hotkey: 'ctrl+f' }),
+    commandPalette: genModeCommandSchema({ hotkey: 'ctrl+p', showInCommandPalette: false }),
+  })
+  .prefault({});
 
-  categories: z
-    .array(
-      z.object({
-        name: z.string(),
-        color: z.enum(colorList).optional(),
-        links: z.array(
-          z.object({
-            name: z.string(),
-            icon: z.string().optional(),
-            url: z.string().url(),
-            alias: z.string().optional(),
-          }),
-        ),
-      }),
-    )
-    .optional(),
-});
+const modeList = modesSchema.unwrap().keyof().options;
 
-export const hotkeysCommandList = Object.entries(
-  configSchema.shape.mappings.unwrap().keyof().options,
-).map(([, key]) => key);
+export const commandsSchema = z
+  .object({
+    nextSuggestion: genModeCommandSchema({ hotkey: 'ArrowDown', showInCommandPalette: false }),
+    prevSuggestion: genModeCommandSchema({ hotkey: 'ArrowUp', showInCommandPalette: false }),
+    clearInput: genModeCommandSchema({ hotkey: 'ctrl+l', showInCommandPalette: false }),
+    openLinkFromClipboard: genModeCommandSchema(),
+    openGoogle: genModeCommandSchema(),
+    openYandex: genModeCommandSchema(),
+    searchOnGoogleFromClipboard: genModeCommandSchema(),
+    searchOnYandexFromClipboard: genModeCommandSchema(),
+    editConfig: genModeCommandSchema(),
+    showConfig: genModeCommandSchema(),
+    reloadConfig: genModeCommandSchema(),
+    setConfigUrlFromClipboard: genModeCommandSchema(),
+    showMyIP: genModeCommandSchema(),
+  })
+  .prefault({});
+
+export const configSchema = z
+  .object({
+    editConfigUrl: z.string().optional(),
+    defaultMode: z.enum(modeList).default('google'),
+
+    columns: z
+      .object({
+        gap: z.number().default(24),
+        width: z.number().default(200),
+        maxCount: z.number().default(6),
+      })
+      .prefault({}),
+
+    modes: modesSchema,
+    commands: commandsSchema,
+
+    categories: z
+      .array(
+        z.object({
+          name: z.string(),
+          color: z.enum(colorList).optional(),
+          links: z.array(
+            z.object({
+              name: z.string(),
+              icon: z.string().optional(),
+              url: z.string().url(),
+              alias: z.string().optional(),
+            }),
+          ),
+        }),
+      )
+      .default([]),
+  })
+  .prefault({});

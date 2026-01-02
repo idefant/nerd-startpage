@@ -3,28 +3,46 @@ columns:
   width: 220
   maxCount: 6
 
-mappings:
-  nextSuggestion: ['ArrowDown']
-  prevSuggestion: ['ArrowUp']
-  searchOnGoogle: ['ctrl+g']
-  searchOnYandex: ['ctrl+y']
-  searchOnNpm: []
-  searchInHistory: ['ctrl+h']
-  searchInBookmarks: ['ctrl+b']
-  searchInSessions: ['ctrl+s']
-  searchInLinks: ['ctrl+f']
-  commandPalette: ['ctrl+p']
-  clearInput: ['ctrl+l']
-  openLinkFromClipboard: []
-  openGoogle: []
-  openYandex: []
-  searchOnGoogleFromClipboard: []
-  searchOnYandexFromClipboard: []
-  editConfig: []
-  showConfig: []
-  reloadConfig: []
-  setConfigUrlFromClipboard: []
-  showMyIP: []
+defaultMode: google
+
+modes:
+  google:
+    mapping: ['ctrl+g']
+  yandex:
+    mapping: ['ctrl+y']
+  npm:
+  history:
+    mapping: ['ctrl+h']
+  bookmarks:
+    mapping: ['ctrl+b']
+  sessions:
+    mapping: ['ctrl+s']
+  links:
+    mapping: ['ctrl+f']
+  commandPalette:
+    mapping: ['ctrl+p']
+
+commands:
+  nextSuggestion:
+    mapping: ['ArrowDown']
+    # showInCommandPalette: false
+    # disabled: false
+  prevSuggestion:
+    mapping: ['ArrowUp']
+    # showInCommandPalette: false
+  clearInput:
+    mapping: ['ctrl+l']
+    # showInCommandPalette: false
+  openLinkFromClipboard:
+  openGoogle:
+  openYandex:
+  searchOnGoogleFromClipboard:
+  searchOnYandexFromClipboard:
+  editConfig:
+  showConfig:
+  reloadConfig:
+  setConfigUrlFromClipboard:
+  showMyIP:
 
 categories:
   - name:  About_Project

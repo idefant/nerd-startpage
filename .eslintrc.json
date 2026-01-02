@@ -128,7 +128,7 @@
         "svg": "never"
       }
     ],
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "destructuredArrayIgnorePattern": "^_" }],
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/object-curly-spacing": ["warn", "always"],
     "@typescript-eslint/no-explicit-any": "off",

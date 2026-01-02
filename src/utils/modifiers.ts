@@ -15,7 +15,7 @@ export type ModifierCombo =
   | 'caw'
   | 'scaw';
 
-type Event = {
+export type ModifiersOnlyEvent = {
   shiftKey: boolean;
   ctrlKey: boolean;
   altKey: boolean;
@@ -23,7 +23,7 @@ type Event = {
 };
 
 /** Получение примененных модификаторов */
-export const getModifiers = (event: Event): ModifierCombo => {
+export const getModifiers = (event: ModifiersOnlyEvent): ModifierCombo => {
   const modifiers: string[] = [];
   if (event.shiftKey) {
     modifiers.push('s');

@@ -1,16 +1,17 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { mainApi } from '#api/mainApi';
+import { configSchema } from '#schema/configSchema';
 import { Config } from '#types/configType';
 
 type ConfigState = {
   configUrl?: string;
-  config?: Config;
+  config: Config;
 };
 
 const initialState: ConfigState = {
   configUrl: undefined,
-  config: undefined,
+  config: configSchema.parse({}),
 };
 
 export const configSlice = createSlice({

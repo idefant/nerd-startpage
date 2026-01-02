@@ -1,3 +1,8 @@
-import { modeList } from '#data/mode';
+import { modeNameList } from '#data/mode';
 
-export type Mode = (typeof modeList)[number];
+export type ModeName = (typeof modeNameList)[number];
+
+export type Mode = {
+  title: string;
+  icon: string;
+};

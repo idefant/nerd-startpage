@@ -1,20 +1,12 @@
 import classNames from 'classnames';
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useDashboardContext } from '#contexts/DashboardContext';
-import { useFocused } from '#hooks/useFocused';
-import { hotkeysCommandList } from '#schema/configSchema';
+import { useCommandHotkey } from '#hooks/useCommandHotkey';
+import { useFocusedWithin } from '#hooks/useFocusedWithin';
 import { Suggestion } from '#types/suggestionType';
 import { loopBetween } from '#utils/loopBetween';
 import { getModifiers } from '#utils/modifiers';
@@ -33,11 +25,12 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
   ({ suggestions }, ref) => {
     const query = useDashboardContext((ctx) => ctx.query);
     const inputRef = useDashboardContext((ctx) => ctx.inputRef);
+    const searchBoxRef = useDashboardContext((ctx) => ctx.searchBoxRef);
 
     const suggestionsRef = useRef<HTMLDivElement>(null);
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(-1);
     const [hasBackdrop, setHasBackdrop] = useState(false);
-    const isInputFocused = useFocused(inputRef);
+    const isFocused = useFocusedWithin(searchBoxRef);
 
     useImperativeHandle(
       ref,
@@ -85,39 +78,15 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
       return () => inputElem?.removeEventListener('click', cb);
     }, [inputRef, query, suggestions.length]);
 
-    // XXX: Пока не уверен, а нахрена это надо
-    const hotkeys = useMemo(
-      () =>
-        Object.fromEntries(
-          hotkeysCommandList.map((commandKey) => {
-            // if (config?.mappings?.[commandKey]) {
-            //   return [commandKey, config?.mappings?.[commandKey]];
-            // }
-            // if (commandKey in commandsMap && 'hotkey' in commandsMap[commandKey as CommandKey]) {
-            //   return [commandKey, (commandsMap[commandKey as CommandKey] as any).hotkey as string];
-            // }
-            if (commandKey === 'prevSuggestion') {
-              return [commandKey, 'ArrowUp'];
-            }
-            if (commandKey === 'nextSuggestion') {
-              return [commandKey, 'ArrowDown'];
-            }
-            return [commandKey, []];
-          }),
-        ) as Record<(typeof hotkeysCommandList)[number], string | string[]>,
-      // [config?.mappings],
-      [],
-    );
-
-    useHotkeys(
-      hotkeys.prevSuggestion,
+    useCommandHotkey(
+      'prevSuggestion',
       () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
-      { ...hotkeyHookConfig, scopes: 'suggestions' },
+      { scopes: 'suggestions' },
     );
-    useHotkeys(
-      hotkeys.nextSuggestion,
+    useCommandHotkey(
+      'nextSuggestion',
       () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
-      { ...hotkeyHookConfig, scopes: 'suggestions' },
+      { scopes: 'suggestions' },
     );
 
     useHotkeys(
@@ -149,7 +118,7 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
       <>
         <div
           className={classNames(cls.suggestions, {
-            [cls.suggestionsVisible]: isInputFocused && hasBackdrop && suggestions.length !== 0,
+            [cls.suggestionsVisible]: isFocused && hasBackdrop && suggestions.length !== 0,
           })}
           ref={suggestionsRef}
         >
@@ -164,6 +133,7 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
                 className={classNames(cls.suggestion, {
                   [cls.suggestionActive]: activeSuggestionIndex === i,
                 })}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleClickSuggestion}
                 type="button"
               >
@@ -181,7 +151,7 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
         {createPortal(
           <div
             className={classNames(cls.backdrop, {
-              [cls.backdropVisible]: isInputFocused && hasBackdrop,
+              [cls.backdropVisible]: isFocused && hasBackdrop,
             })}
             onClick={() => setHasBackdrop(false)}
           />,

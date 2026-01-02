@@ -1,14 +1,15 @@
-import { type Mode } from '#types/modeType';
+import { modesSchema } from '#schema/configSchema';
+import { Mode, ModeName } from '#types/modeType';
 
-export const modeList = [
-  'searchOnGoogle',
-  'searchOnYandex',
-  'searchOnNpm',
-  'searchInHistory',
-  'searchInBookmarks',
-  'searchInSessions',
-  'searchInLinks',
-  'commandPalette',
-] as const;
+export const modeNameList = modesSchema.unwrap().keyof().options;
 
-export const defaultMode: Mode = 'searchOnGoogle';
+export const modeMap: Record<ModeName, Mode> = {
+  google: { title: 'Search on Google', icon: '' },
+  yandex: { title: 'Search on Yandex', icon: '' },
+  npm: { title: 'Search on NPM', icon: '' },
+  history: { title: 'Search in History', icon: '' },
+  bookmarks: { title: 'Search in Bookmarks', icon: '' },
+  sessions: { title: 'Search in Sessions', icon: '󰭌' },
+  links: { title: 'Search in Links', icon: '󱐋' },
+  commandPalette: { title: 'Command Palette', icon: '' },
+};

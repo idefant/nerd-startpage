@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import YAML from 'yaml';
 
 import { configSchema } from '#schema/configSchema';
+import { removeNullObjectValues } from '#utils/removeNullObjectValues';
 
 export const mainApi = createApi({
   reducerPath: 'api/main',
@@ -18,11 +19,10 @@ export const mainApi = createApi({
 
           const text = await response.text();
           try {
-            const parsedConfig = YAML.parse(text);
+            const parsedConfig = removeNullObjectValues(YAML.parse(text));
             const validationResult = await configSchema.safeParseAsync(parsedConfig);
             if (validationResult.error) {
               toast.error('Ошибка в конфигурации. Смотри в консоль');
-              console.log(validationResult.error);
               return;
             }
             toast.success('Конфигурация успешно обновлена');

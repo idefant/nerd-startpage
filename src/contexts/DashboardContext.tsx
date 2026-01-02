@@ -1,12 +1,13 @@
 import { createContext, useContextSelector } from 'use-context-selector';
 
-import { Mode } from '#types/modeType';
+import { ModeName } from '#types/modeType';
 
 type DashboardContextValue = {
   query: string;
   debouncedQuery: string;
   setQuery: (value: string | ((value: string) => string), immediately?: boolean) => void;
-  setMode: React.Dispatch<React.SetStateAction<Mode>>;
+  setMode: React.Dispatch<React.SetStateAction<ModeName>>;
+  searchBoxRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
 };
 
@@ -15,6 +16,7 @@ export const DashboardContext = createContext<DashboardContextValue>({
   debouncedQuery: '',
   setQuery: () => {},
   setMode: () => {},
+  searchBoxRef: { current: null },
   inputRef: { current: null },
 });
 
