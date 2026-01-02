@@ -68,7 +68,7 @@ export const DashboardPage: FC = () => {
   > = useMemo(
     () => ({
       clearInput: () => setQuery('', true),
-      openLinkFromClipboard: async () => {
+      openLinkFromClipboard: async (e) => {
         const url = await getTextFromClipboard();
         if (!url) return;
         const urlValidationResult = checkIsValidUrl(url);
@@ -76,22 +76,22 @@ export const DashboardPage: FC = () => {
           toast.error('URL from clipboard is invalid');
           return;
         }
-        openUrl(urlValidationResult.url);
+        openUrl(urlValidationResult.url, e.ctrlKey);
       },
-      openGoogle: (e) => openUrl('https://google.com', e?.ctrlKey),
-      openYandex: (e) => openUrl('https://ya.ru', e?.ctrlKey),
-      searchOnGoogleFromClipboard: async () => {
+      openGoogle: (e) => openUrl('https://google.com', e.ctrlKey),
+      openYandex: (e) => openUrl('https://ya.ru', e.ctrlKey),
+      searchOnGoogleFromClipboard: async (e) => {
         const query = await getTextFromClipboard();
         if (!query) return;
-        openUrl(getGoogleSearchUrl(query));
+        openUrl(getGoogleSearchUrl(query), e.ctrlKey);
       },
-      searchOnYandexFromClipboard: async () => {
+      searchOnYandexFromClipboard: async (e) => {
         const query = await getTextFromClipboard();
         if (!query) return;
-        openUrl(getYandexSearchUrl(query));
+        openUrl(getYandexSearchUrl(query), e.ctrlKey);
       },
-      showConfig: () => handleShowConfig(),
-      editConfig: () => handleEditConfig(),
+      showConfig: (e) => handleShowConfig({ newTab: e.ctrlKey }),
+      editConfig: (e) => handleEditConfig({ newTab: e.ctrlKey }),
       reloadConfig: () => handleReloadConfig(),
       setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
       showMyIP: handleShowIP,
