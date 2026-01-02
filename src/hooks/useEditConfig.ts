@@ -12,13 +12,13 @@ export const useEditConfig = () => {
 
   const editConfig = useCallback(
     (options?: { newTab?: boolean }) => {
-      if (config?.editConfigUrl) {
+      if (config.editConfigUrl) {
         openUrl(config.editConfigUrl, options?.newTab);
         return;
       }
       showConfig(options);
     },
-    [config?.editConfigUrl, showConfig],
+    [config.editConfigUrl, showConfig],
   );
 
   return editConfig;

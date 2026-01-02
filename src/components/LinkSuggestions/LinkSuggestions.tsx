@@ -16,8 +16,8 @@ const LinkSuggestions: FC = () => {
   const suggestionListRef = useRef<SuggestionListRef>(null);
 
   const links = useMemo(
-    () => (config?.categories || []).flatMap((category) => category.links),
-    [config?.categories],
+    () => config.categories.flatMap((category) => category.links),
+    [config.categories],
   );
 
   const suggestions = useMemo<Suggestion[]>(() => {
@@ -47,7 +47,7 @@ const LinkSuggestions: FC = () => {
       const suggestion = suggestionListRef.current?.currentSuggestion;
       if (suggestion || !query) return;
 
-      const links = (config?.categories || []).flatMap((category) => category.links);
+      const links = config.categories.flatMap((category) => category.links);
       const foundLink = links.find((link) => link.alias === query.trim());
       if (!foundLink) return;
       openUrl(foundLink.url, e.ctrlKey);

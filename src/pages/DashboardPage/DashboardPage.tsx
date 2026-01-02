@@ -163,10 +163,10 @@ export const DashboardPage: FC = () => {
         </HotkeysProvider>
 
         <CategoryGrid
-          columnWidth={config?.columns?.width}
-          columnGap={config?.columns?.gap}
-          columnMaxCount={config?.columns?.maxCount}
-          categories={config?.categories}
+          columnWidth={config.columns.width}
+          columnGap={config.columns.gap}
+          columnMaxCount={config.columns.maxCount}
+          categories={config.categories}
         />
       </div>
     </DashboardContext.Provider>
