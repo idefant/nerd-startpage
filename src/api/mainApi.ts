@@ -23,6 +23,7 @@ export const mainApi = createApi({
             const validationResult = await configSchema.safeParseAsync(parsedConfig);
             if (validationResult.error) {
               toast.error('Ошибка в конфигурации. Смотри в консоль');
+              console.log(validationResult.error);
               return;
             }
             toast.success('Конфигурация успешно обновлена');

@@ -1,3 +1,5 @@
+# prettier-ignore
+
 # -----------------------------------------------------------------------------
 # Nerd Startpage — config.yaml
 #
@@ -127,10 +129,10 @@ categories:
       - { name: My_Website, icon: 󰖟, url: https://idefant.ru }
   - name:  Social
     links:
-      - { name: Telegram, icon: , url: web.telegram.org/, alias: tg }
+      - { name: Telegram, icon: , url: https://web.telegram.org/, alias: tg }
       - { name: Youtube, icon: , url: https://youtube.com/, alias: yt }
       - { name: Gmail, icon: 󰊫, url: https://mail.google.com/, alias: gm }
-      - { name: LinkedIn, icon: , url: linkedin.com, alias: li }
+      - { name: LinkedIn, icon: , url: https://linkedin.com, alias: li }
       - { name: WhatsApp, icon: , url: https://web.whatsapp.com/, alias: wa }
   - name:  Code
     links:
@@ -138,7 +140,6 @@ categories:
       - { name: BundlePhobia, icon: , url: https://bundlephobia.com/, alias: bp }
       - { name: CanInclude, url: https://caninclude.glitch.me/, alias: ci }
       - { name: CanIUse, url: https://caniuse.com/, alias: cu }
-      - { name: Tailwind, icon: 󱏿, url: https://tailwindcss.com/, alias: tw }
       - { name: Codewars, icon: 󰅩, url: https://www.codewars.com, alias: cw }
   - name: 󱁤 Tools
     links:
