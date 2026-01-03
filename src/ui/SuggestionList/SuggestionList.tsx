@@ -17,6 +17,7 @@ import { useCommandHotkey } from '#hooks/useCommandHotkey';
 import { useFocusedWithin } from '#hooks/useFocusedWithin';
 import { useLeaderSequence } from '#hooks/useLeaderSequence';
 import { Suggestion } from '#types/suggestionType';
+import Spinner from '#ui/Spinner';
 import { loopBetween } from '#utils/loopBetween';
 import { getModifiers, ModifiersOnlyEvent } from '#utils/modifiers';
 
@@ -29,10 +30,11 @@ export interface SuggestionListRef {
 interface SuggestionListProps {
   suggestions: Suggestion[];
   onEnterWithoutSuggestion?: (e: ModifiersOnlyEvent) => void;
+  isLoading?: boolean;
 }
 
 const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
-  ({ suggestions, onEnterWithoutSuggestion }, ref) => {
+  ({ suggestions, onEnterWithoutSuggestion, isLoading }, ref) => {
     const query = useDashboardContext((ctx) => ctx.query);
     const inputRef = useDashboardContext((ctx) => ctx.inputRef);
     const searchBoxRef = useDashboardContext((ctx) => ctx.searchBoxRef);
@@ -75,7 +77,7 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
     useEffect(() => {
       setActiveSuggestionIndex(-1);
       scrollSuggestionsToTop();
-    }, [scrollSuggestionsToTop, visibleSuggestions]);
+    }, [scrollSuggestionsToTop, query]);
 
     useEffect(() => {
       if (activeSuggestionIndex === -1) {
@@ -96,18 +98,22 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
 
     useCommandHotkey(
       'prevSuggestion',
-      () =>
+      () => {
+        if (isLoading) return;
         setActiveSuggestionIndex((prev) =>
           loopBetween(-1, visibleSuggestions.length - 1, prev - 1),
-        ),
+        );
+      },
       { scopes: 'suggestions' },
     );
     useCommandHotkey(
       'nextSuggestion',
-      () =>
+      () => {
+        if (isLoading) return;
         setActiveSuggestionIndex((prev) =>
           loopBetween(-1, visibleSuggestions.length - 1, prev + 1),
-        ),
+        );
+      },
       { scopes: 'suggestions' },
     );
 
@@ -148,10 +154,20 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
       <>
         <div
           className={classNames(cls.suggestions, {
-            [cls.suggestionsVisible]: isFocused && hasBackdrop && visibleSuggestions.length !== 0,
+            [cls.suggestionsVisible]:
+              isFocused && hasBackdrop && (visibleSuggestions.length !== 0 || isLoading),
           })}
           ref={suggestionsRef}
         >
+          {isLoading && (
+            <>
+              <div className={cls.suggestionsBackdrop} />
+              <div className={cls.spinnerContainer}>
+                <Spinner className={cls.spinner} />
+              </div>
+            </>
+          )}
+
           {visibleSuggestions?.map((suggestion, i) => {
             const handleClickSuggestion = (e: React.MouseEvent) => {
               const modifiersCombo = getModifiers(e);

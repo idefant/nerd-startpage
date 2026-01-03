@@ -12,18 +12,20 @@ import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const GoogleSuggestions: FC = () => {
-  const query = useDashboardContext((ctx) => ctx.debouncedQuery);
+  const query = useDashboardContext((ctx) => ctx.query);
+  const debouncedQuery = useDashboardContext((ctx) => ctx.debouncedQuery);
   const setQuery = useDashboardContext((ctx) => ctx.setQuery);
+  const isPendingQuery = useDashboardContext((ctx) => ctx.isPendingQuery);
 
   const suggestionListRef = useRef<SuggestionListRef>(null);
 
-  const { data: googleSuggestions } = useFetchGoogleSuggestionsQuery(
-    { query },
-    { skip: query.length === 0 },
+  const { data: googleSuggestions, isFetching } = useFetchGoogleSuggestionsQuery(
+    { query: debouncedQuery },
+    { skip: debouncedQuery.length === 0 },
   );
 
   const suggestions = useMemo<Suggestion[]>(() => {
-    if (query.trim().length === 0) {
+    if (debouncedQuery.trim().length === 0) {
       return [];
     }
     return (googleSuggestions?.[1] || []).map((suggestion) => {
@@ -44,7 +46,7 @@ const GoogleSuggestions: FC = () => {
         },
       };
     }) as Suggestion[];
-  }, [googleSuggestions, query]);
+  }, [googleSuggestions, debouncedQuery]);
 
   const handleEnterQuery = useCallback(
     (e: ModifiersOnlyEvent) => {
@@ -75,6 +77,7 @@ const GoogleSuggestions: FC = () => {
     <SuggestionList
       suggestions={suggestions}
       onEnterWithoutSuggestion={handleEnterQuery}
+      isLoading={isFetching || isPendingQuery}
       ref={suggestionListRef}
     />
   );

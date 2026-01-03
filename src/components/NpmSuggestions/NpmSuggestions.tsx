@@ -9,15 +9,17 @@ import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const NpmSuggestions: FC = () => {
-  const query = useDashboardContext((ctx) => ctx.debouncedQuery);
+  const query = useDashboardContext((ctx) => ctx.query);
+  const debouncedQuery = useDashboardContext((ctx) => ctx.debouncedQuery);
+  const isPendingQuery = useDashboardContext((ctx) => ctx.isPendingQuery);
 
-  const { data: npmSuggestions } = useFetchNpmSuggestionsQuery(
-    { query },
-    { skip: query.length === 0 },
+  const { data: npmSuggestions, isFetching } = useFetchNpmSuggestionsQuery(
+    { query: debouncedQuery },
+    { skip: debouncedQuery.length === 0 },
   );
 
   const suggestions = useMemo<Suggestion[]>(() => {
-    if (query.trim().length === 0) {
+    if (debouncedQuery.trim().length === 0) {
       return [];
     }
     return (npmSuggestions || []).map((suggestion) => {
@@ -39,7 +41,7 @@ const NpmSuggestions: FC = () => {
         },
       };
     });
-  }, [query, npmSuggestions]);
+  }, [debouncedQuery, npmSuggestions]);
 
   const handleEnterQuery = useCallback(
     (e: ModifiersOnlyEvent) => {
@@ -50,7 +52,13 @@ const NpmSuggestions: FC = () => {
     [query],
   );
 
-  return <SuggestionList suggestions={suggestions} onEnterWithoutSuggestion={handleEnterQuery} />;
+  return (
+    <SuggestionList
+      suggestions={suggestions}
+      onEnterWithoutSuggestion={handleEnterQuery}
+      isLoading={isFetching || isPendingQuery}
+    />
+  );
 };
 
 export default NpmSuggestions;

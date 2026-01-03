@@ -33,7 +33,7 @@ export const DashboardPage: FC = () => {
   const { config } = useAppSelector((state) => state.config);
 
   const [mode, setMode] = useState<ModeName>(config.defaultMode);
-  const [query, debouncedQuery, setQuery] = useDebounceState('', 300);
+  const [query, debouncedQuery, setQuery, isPendingQuery] = useDebounceState('', 300);
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -85,8 +85,8 @@ export const DashboardPage: FC = () => {
   );
 
   const dashboardContextValue = useMemo(
-    () => ({ query, debouncedQuery, setQuery, setMode, searchBoxRef, inputRef }),
-    [query, debouncedQuery, setQuery, setMode, searchBoxRef, inputRef],
+    () => ({ query, debouncedQuery, setQuery, isPendingQuery, setMode, searchBoxRef, inputRef }),
+    [query, debouncedQuery, setQuery, isPendingQuery, setMode, searchBoxRef, inputRef],
   );
 
   return (

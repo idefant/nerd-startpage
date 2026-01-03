@@ -6,6 +6,7 @@ type DashboardContextValue = {
   query: string;
   debouncedQuery: string;
   setQuery: (value: string | ((value: string) => string), immediately?: boolean) => void;
+  isPendingQuery: boolean;
   setMode: React.Dispatch<React.SetStateAction<ModeName>>;
   searchBoxRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
@@ -15,6 +16,7 @@ export const DashboardContext = createContext<DashboardContextValue>({
   query: '',
   debouncedQuery: '',
   setQuery: () => {},
+  isPendingQuery: false,
   setMode: () => {},
   searchBoxRef: { current: null },
   inputRef: { current: null },
