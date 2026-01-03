@@ -1,5 +1,13 @@
 import classNames from 'classnames';
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -7,9 +15,10 @@ import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useDashboardContext } from '#contexts/DashboardContext';
 import { useCommandHotkey } from '#hooks/useCommandHotkey';
 import { useFocusedWithin } from '#hooks/useFocusedWithin';
+import { useLeaderSequence } from '#hooks/useLeaderSequence';
 import { Suggestion } from '#types/suggestionType';
 import { loopBetween } from '#utils/loopBetween';
-import { getModifiers } from '#utils/modifiers';
+import { getModifiers, ModifiersOnlyEvent } from '#utils/modifiers';
 
 import cls from './SuggestionList.module.scss';
 
@@ -19,10 +28,11 @@ export interface SuggestionListRef {
 
 interface SuggestionListProps {
   suggestions: Suggestion[];
+  onEnterWithoutSuggestion?: (e: ModifiersOnlyEvent) => void;
 }
 
 const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
-  ({ suggestions }, ref) => {
+  ({ suggestions, onEnterWithoutSuggestion }, ref) => {
     const query = useDashboardContext((ctx) => ctx.query);
     const inputRef = useDashboardContext((ctx) => ctx.inputRef);
     const searchBoxRef = useDashboardContext((ctx) => ctx.searchBoxRef);
@@ -31,13 +41,19 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
     const [activeSuggestionIndex, setActiveSuggestionIndex] = useState<number>(-1);
     const [hasBackdrop, setHasBackdrop] = useState(false);
     const isFocused = useFocusedWithin(searchBoxRef);
+    const { isLeaderSequence, applyLeaderSequence } = useLeaderSequence();
+
+    const visibleSuggestions = useMemo(
+      () => (isLeaderSequence ? [] : suggestions),
+      [isLeaderSequence, suggestions],
+    );
 
     useImperativeHandle(
       ref,
       () => ({
-        currentSuggestion: suggestions[activeSuggestionIndex],
+        currentSuggestion: visibleSuggestions[activeSuggestionIndex],
       }),
-      [activeSuggestionIndex, suggestions],
+      [activeSuggestionIndex, visibleSuggestions],
     );
 
     const scrollSuggestionsToTop = useCallback(
@@ -51,15 +67,15 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
     }, [activeSuggestionIndex]);
 
     const handleShowBackdropIfNeed = useCallback(() => {
-      setHasBackdrop(!!query || !!suggestions.length);
-    }, [query, suggestions.length]);
+      setHasBackdrop(!!query || !!visibleSuggestions.length);
+    }, [query, visibleSuggestions.length]);
 
     useEffect(() => handleShowBackdropIfNeed(), [handleShowBackdropIfNeed]);
 
     useEffect(() => {
       setActiveSuggestionIndex(-1);
       scrollSuggestionsToTop();
-    }, [scrollSuggestionsToTop, suggestions]);
+    }, [scrollSuggestionsToTop, visibleSuggestions]);
 
     useEffect(() => {
       if (activeSuggestionIndex === -1) {
@@ -73,19 +89,25 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
       const inputElem = inputRef.current;
       if (!inputElem) return;
 
-      const cb = () => setHasBackdrop(!!query || !!suggestions.length);
+      const cb = () => setHasBackdrop(!!query || !!visibleSuggestions.length);
       inputElem?.addEventListener('click', cb);
       return () => inputElem?.removeEventListener('click', cb);
-    }, [inputRef, query, suggestions.length]);
+    }, [inputRef, query, visibleSuggestions.length]);
 
     useCommandHotkey(
       'prevSuggestion',
-      () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev - 1)),
+      () =>
+        setActiveSuggestionIndex((prev) =>
+          loopBetween(-1, visibleSuggestions.length - 1, prev - 1),
+        ),
       { scopes: 'suggestions' },
     );
     useCommandHotkey(
       'nextSuggestion',
-      () => setActiveSuggestionIndex((prev) => loopBetween(-1, suggestions.length - 1, prev + 1)),
+      () =>
+        setActiveSuggestionIndex((prev) =>
+          loopBetween(-1, visibleSuggestions.length - 1, prev + 1),
+        ),
       { scopes: 'suggestions' },
     );
 
@@ -105,11 +127,19 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
     useHotkeys(
       'Enter',
       (e) => {
-        const suggestion = suggestions[activeSuggestionIndex];
-        if (!suggestion) return;
+        if (isLeaderSequence) {
+          applyLeaderSequence(e);
+          return;
+        }
+
+        const suggestion = visibleSuggestions[activeSuggestionIndex];
+        if (!suggestion) {
+          onEnterWithoutSuggestion?.(e);
+          return;
+        }
 
         const modifiersCombo = getModifiers(e);
-        suggestion.actions?.[modifiersCombo]?.();
+        suggestion.actions?.[modifiersCombo]?.(e);
       },
       { ...hotkeyHookConfig, scopes: 'suggestions', ignoreModifiers: true },
     );
@@ -118,14 +148,14 @@ const SuggestionList = forwardRef<SuggestionListRef, SuggestionListProps>(
       <>
         <div
           className={classNames(cls.suggestions, {
-            [cls.suggestionsVisible]: isFocused && hasBackdrop && suggestions.length !== 0,
+            [cls.suggestionsVisible]: isFocused && hasBackdrop && visibleSuggestions.length !== 0,
           })}
           ref={suggestionsRef}
         >
-          {suggestions?.map((suggestion, i) => {
+          {visibleSuggestions?.map((suggestion, i) => {
             const handleClickSuggestion = (e: React.MouseEvent) => {
               const modifiersCombo = getModifiers(e);
-              suggestion.actions?.[modifiersCombo]?.();
+              suggestion.actions?.[modifiersCombo]?.(e);
             };
 
             return (

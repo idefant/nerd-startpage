@@ -1,8 +1,8 @@
-import { ModifierCombo } from '#utils/modifiers';
+import { ModifierCombo, ModifiersOnlyEvent } from '#utils/modifiers';
 
 export type Suggestion = {
   title?: string;
   extra?: string;
   // XXX: Добавить описание к каждой команде
-  actions?: { [key in ModifierCombo]?: () => void };
+  actions?: { [key in ModifierCombo]?: (e: ModifiersOnlyEvent) => void };
 };

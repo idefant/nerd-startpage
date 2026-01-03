@@ -1,4 +1,4 @@
-import { FC, useMemo, useRef } from 'react';
+import { FC, useCallback, useMemo, useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useFetchGoogleSuggestionsQuery } from '#api/mainApi';
@@ -8,6 +8,7 @@ import { Suggestion } from '#types/suggestionType';
 import SuggestionList, { SuggestionListRef } from '#ui/SuggestionList';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
 import { getGoogleSearchUrl } from '#utils/getSearchEngineUrl';
+import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const GoogleSuggestions: FC = () => {
@@ -45,11 +46,9 @@ const GoogleSuggestions: FC = () => {
     }) as Suggestion[];
   }, [googleSuggestions, query]);
 
-  useHotkeys(
-    'Enter',
-    (e) => {
-      const suggestion = suggestionListRef.current?.currentSuggestion;
-      if (suggestion || !query) return;
+  const handleEnterQuery = useCallback(
+    (e: ModifiersOnlyEvent) => {
+      if (!query) return;
 
       const urlValidationResult = checkIsValidUrl(query);
       if (urlValidationResult.success) {
@@ -59,7 +58,7 @@ const GoogleSuggestions: FC = () => {
       const url = getGoogleSearchUrl(query);
       openUrl(url, e.ctrlKey);
     },
-    { ...hotkeyHookConfig, scopes: 'suggestions', ignoreModifiers: true },
+    [query],
   );
 
   useHotkeys(
@@ -72,7 +71,13 @@ const GoogleSuggestions: FC = () => {
     { ...hotkeyHookConfig, scopes: 'suggestions' },
   );
 
-  return <SuggestionList suggestions={suggestions} ref={suggestionListRef} />;
+  return (
+    <SuggestionList
+      suggestions={suggestions}
+      onEnterWithoutSuggestion={handleEnterQuery}
+      ref={suggestionListRef}
+    />
+  );
 };
 
 export default GoogleSuggestions;

@@ -37,5 +37,5 @@ export const getModifiers = (event: ModifiersOnlyEvent): ModifierCombo => {
   if (event.metaKey) {
     modifiers.push('w');
   }
-  return modifiers as unknown as ModifierCombo;
+  return modifiers.join('') as ModifierCombo;
 };

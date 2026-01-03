@@ -58,7 +58,7 @@ const BookmarkSuggestions: FC = () => {
       const link = suggestion.extra;
       if (!link) return;
 
-      setMode('searchOnGoogle');
+      setMode('google');
       setQuery(link, true);
     },
     { ...hotkeyHookConfig, scopes: 'suggestions' },

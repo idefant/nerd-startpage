@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
-import { toast } from 'react-toastify';
 
 import BookmarkSuggestions from '#components/BookmarkSuggestions';
 import CommandPaletteSuggestions from '#components/CommandPaletteSuggestions/CommandPaletteSuggestions';
@@ -21,14 +20,12 @@ import { useReloadConfig } from '#hooks/useReloadConfig';
 import { useSetConfigUrlFromClipboard } from '#hooks/useSetConfigUrlFromClipboard';
 import { useShowConfig } from '#hooks/useShowConfig';
 import { useShowIp } from '#hooks/useShowIp';
-import { CommandName } from '#types/commandType';
 import { ModeName } from '#types/modeType';
 import { CategoryGrid } from '#ui/CategoryGrid';
-import { checkIsValidUrl } from '#utils/checkIsValidUrl';
-import { getGoogleSearchUrl, getYandexSearchUrl } from '#utils/getSearchEngineUrl';
-import { getTextFromClipboard } from '#utils/getTextFromClipboard';
-import { ModifiersOnlyEvent } from '#utils/modifiers';
-import { openUrl } from '#utils/openUrl';
+import { openGoogle } from '#utils/commands/openGoogle';
+import { openLinkFromClipboard } from '#utils/commands/openLinkFromClipboard';
+import { openYandex } from '#utils/commands/openYandex';
+import { searchFromClipboard } from '#utils/commands/searchFromClipboard';
 
 import cls from './DashboardPage.module.scss';
 
@@ -42,11 +39,11 @@ export const DashboardPage: FC = () => {
 
   const { detailedModesMap } = useModes();
 
-  const handleShowConfig = useShowConfig();
-  const handleEditConfig = useEditConfig();
-  const handleReloadConfig = useReloadConfig();
-  const handleSetConfigUrlFromClipboard = useSetConfigUrlFromClipboard();
-  const handleShowIP = useShowIp();
+  const showConfig = useShowConfig();
+  const editConfig = useEditConfig();
+  const reloadConfig = useReloadConfig();
+  const setConfigUrlFromClipboard = useSetConfigUrlFromClipboard();
+  const showMyIP = useShowIp();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -62,62 +59,22 @@ export const DashboardPage: FC = () => {
   useModeHotkey('links', () => setMode('links'));
   useModeHotkey('commandPalette', () => setMode('commandPalette'));
 
-  const commandActionsMap: Record<
-    Exclude<CommandName, 'nextSuggestion' | 'prevSuggestion'>,
-    (e: Partial<ModifiersOnlyEvent>) => void
-  > = useMemo(
-    () => ({
-      clearInput: () => setQuery('', true),
-      openLinkFromClipboard: async (e) => {
-        const url = await getTextFromClipboard();
-        if (!url) return;
-        const urlValidationResult = checkIsValidUrl(url);
-        if (!urlValidationResult.success) {
-          toast.error('URL from clipboard is invalid');
-          return;
-        }
-        openUrl(urlValidationResult.url, e.ctrlKey);
-      },
-      openGoogle: (e) => openUrl('https://google.com', e.ctrlKey),
-      openYandex: (e) => openUrl('https://ya.ru', e.ctrlKey),
-      searchOnGoogleFromClipboard: async (e) => {
-        const query = await getTextFromClipboard();
-        if (!query) return;
-        openUrl(getGoogleSearchUrl(query), e.ctrlKey);
-      },
-      searchOnYandexFromClipboard: async (e) => {
-        const query = await getTextFromClipboard();
-        if (!query) return;
-        openUrl(getYandexSearchUrl(query), e.ctrlKey);
-      },
-      showConfig: (e) => handleShowConfig({ newTab: e.ctrlKey }),
-      editConfig: (e) => handleEditConfig({ newTab: e.ctrlKey }),
-      reloadConfig: () => handleReloadConfig(),
-      setConfigUrlFromClipboard: handleSetConfigUrlFromClipboard,
-      showMyIP: handleShowIP,
-    }),
-    [
-      handleEditConfig,
-      handleReloadConfig,
-      handleSetConfigUrlFromClipboard,
-      handleShowConfig,
-      handleShowIP,
-      setQuery,
-    ],
-  );
-
   // === Other Hotkeys ===
-  useCommandHotkey('clearInput', commandActionsMap.clearInput);
-  useCommandHotkey('openLinkFromClipboard', commandActionsMap.openLinkFromClipboard);
-  useCommandHotkey('openGoogle', commandActionsMap.openGoogle);
-  useCommandHotkey('openYandex', commandActionsMap.openYandex);
-  useCommandHotkey('searchOnGoogleFromClipboard', commandActionsMap.searchOnGoogleFromClipboard);
-  useCommandHotkey('searchOnYandexFromClipboard', commandActionsMap.searchOnYandexFromClipboard);
-  useCommandHotkey('showConfig', commandActionsMap.showConfig);
-  useCommandHotkey('editConfig', commandActionsMap.editConfig);
-  useCommandHotkey('reloadConfig', commandActionsMap.reloadConfig);
-  useCommandHotkey('setConfigUrlFromClipboard', commandActionsMap.setConfigUrlFromClipboard);
-  useCommandHotkey('showMyIP', commandActionsMap.showMyIP);
+  useCommandHotkey('clearInput', () => setQuery('', true));
+  useCommandHotkey('openLinkFromClipboard', (e) => openLinkFromClipboard({ newTab: e.ctrlKey }));
+  useCommandHotkey('openGoogle', (e) => openGoogle({ newTab: e.ctrlKey }));
+  useCommandHotkey('openYandex', (e) => openYandex({ newTab: e.ctrlKey }));
+  useCommandHotkey('searchOnGoogleFromClipboard', (e) =>
+    searchFromClipboard({ engine: 'google', newTab: e.ctrlKey }),
+  );
+  useCommandHotkey('searchOnYandexFromClipboard', (e) =>
+    searchFromClipboard({ engine: 'yandex', newTab: e.ctrlKey }),
+  );
+  useCommandHotkey('showConfig', (e) => showConfig({ newTab: e.ctrlKey }));
+  useCommandHotkey('editConfig', (e) => editConfig({ newTab: e.ctrlKey }));
+  useCommandHotkey('reloadConfig', () => reloadConfig());
+  useCommandHotkey('setConfigUrlFromClipboard', setConfigUrlFromClipboard);
+  useCommandHotkey('showMyIP', showMyIP);
 
   const handleChangeInputValue = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,9 +113,7 @@ export const DashboardPage: FC = () => {
             {mode === 'bookmarks' && <BookmarkSuggestions />}
             {mode === 'sessions' && <SessionSuggestions />}
             {mode === 'links' && <LinkSuggestions />}
-            {mode === 'commandPalette' && (
-              <CommandPaletteSuggestions commandActionsMap={commandActionsMap} />
-            )}
+            {mode === 'commandPalette' && <CommandPaletteSuggestions />}
           </div>
         </HotkeysProvider>
 

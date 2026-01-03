@@ -5,33 +5,35 @@ columns:
 
 defaultMode: google
 
+leaderKey: ':'
+
 modes:
   google:
-    mapping: ['ctrl+g']
+    hotkey: ['ctrl+g']
   yandex:
-    mapping: ['ctrl+y']
+    hotkey: ['ctrl+y']
   npm:
   history:
-    mapping: ['ctrl+h']
+    hotkey: ['ctrl+h']
   bookmarks:
-    mapping: ['ctrl+b']
+    hotkey: ['ctrl+b']
   sessions:
-    mapping: ['ctrl+s']
+    hotkey: ['ctrl+s']
   links:
-    mapping: ['ctrl+f']
+    hotkey: ['ctrl+f']
   commandPalette:
-    mapping: ['ctrl+p']
+    hotkey: ['ctrl+p']
 
 commands:
   nextSuggestion:
-    mapping: ['ArrowDown']
+    hotkey: ['ArrowDown']
     # showInCommandPalette: false
     # disabled: false
   prevSuggestion:
-    mapping: ['ArrowUp']
+    hotkey: ['ArrowUp']
     # showInCommandPalette: false
   clearInput:
-    mapping: ['ctrl+l']
+    hotkey: ['ctrl+l']
     # showInCommandPalette: false
   openLinkFromClipboard:
   openGoogle:
@@ -43,6 +45,7 @@ commands:
   reloadConfig:
   setConfigUrlFromClipboard:
   showMyIP:
+    leaderSequence: 'ip'
 
 categories:
   - name:  About_Project

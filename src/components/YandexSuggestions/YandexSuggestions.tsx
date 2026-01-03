@@ -1,4 +1,4 @@
-import { FC, useMemo, useRef } from 'react';
+import { FC, useCallback, useMemo, useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { useFetchYandexSuggestionsQuery } from '#api/mainApi';
@@ -8,6 +8,7 @@ import { Suggestion } from '#types/suggestionType';
 import SuggestionList, { SuggestionListRef } from '#ui/SuggestionList';
 import { checkIsValidUrl } from '#utils/checkIsValidUrl';
 import { getYandexSearchUrl } from '#utils/getSearchEngineUrl';
+import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const YandexSuggestions: FC = () => {
@@ -45,11 +46,9 @@ const YandexSuggestions: FC = () => {
     });
   }, [query, yandexSuggestions]);
 
-  useHotkeys(
-    'Enter',
-    (e) => {
-      const suggestion = suggestionListRef.current?.currentSuggestion;
-      if (suggestion || !query) return;
+  const handleEnterQuery = useCallback(
+    (e: ModifiersOnlyEvent) => {
+      if (!query) return;
 
       const urlValidationResult = checkIsValidUrl(query);
       if (urlValidationResult.success) {
@@ -59,7 +58,7 @@ const YandexSuggestions: FC = () => {
       const url = getYandexSearchUrl(query);
       openUrl(url, e.ctrlKey);
     },
-    { ...hotkeyHookConfig, scopes: 'suggestions', ignoreModifiers: true },
+    [query],
   );
 
   useHotkeys(
@@ -72,7 +71,13 @@ const YandexSuggestions: FC = () => {
     { ...hotkeyHookConfig, scopes: 'suggestions' },
   );
 
-  return <SuggestionList suggestions={suggestions} ref={suggestionListRef} />;
+  return (
+    <SuggestionList
+      suggestions={suggestions}
+      onEnterWithoutSuggestion={handleEnterQuery}
+      ref={suggestionListRef}
+    />
+  );
 };
 
 export default YandexSuggestions;

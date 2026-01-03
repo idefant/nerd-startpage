@@ -1,18 +1,15 @@
-import { FC, useMemo, useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { FC, useCallback, useMemo } from 'react';
 
 import { useFetchNpmSuggestionsQuery } from '#api/mainApi';
-import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useDashboardContext } from '#contexts/DashboardContext';
 import { Suggestion } from '#types/suggestionType';
-import SuggestionList, { SuggestionListRef } from '#ui/SuggestionList';
+import SuggestionList from '#ui/SuggestionList';
 import { getBundlePhobiaPackageUrl, getNpmSearchUrl } from '#utils/getSearchEngineUrl';
+import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const NpmSuggestions: FC = () => {
   const query = useDashboardContext((ctx) => ctx.debouncedQuery);
-
-  const suggestionListRef = useRef<SuggestionListRef>(null);
 
   const { data: npmSuggestions } = useFetchNpmSuggestionsQuery(
     { query },
@@ -44,19 +41,16 @@ const NpmSuggestions: FC = () => {
     });
   }, [query, npmSuggestions]);
 
-  useHotkeys(
-    'Enter',
-    (e) => {
-      const suggestion = suggestionListRef.current?.currentSuggestion;
-      if (suggestion || !query) return;
-
+  const handleEnterQuery = useCallback(
+    (e: ModifiersOnlyEvent) => {
+      if (!query) return;
       const url = getNpmSearchUrl(query);
       openUrl(url, e.ctrlKey);
     },
-    { ...hotkeyHookConfig, scopes: 'suggestions', ignoreModifiers: true },
+    [query],
   );
 
-  return <SuggestionList suggestions={suggestions} ref={suggestionListRef} />;
+  return <SuggestionList suggestions={suggestions} onEnterWithoutSuggestion={handleEnterQuery} />;
 };
 
 export default NpmSuggestions;

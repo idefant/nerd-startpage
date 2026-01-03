@@ -4,6 +4,7 @@ import { colorList } from '#data/color';
 
 const genModeCommandSchema = (options?: {
   hotkey?: string | string[];
+  leaderSequence?: string | string[];
   /** @default true */
   showInCommandPalette?: boolean;
   /** @default false */
@@ -15,6 +16,10 @@ const genModeCommandSchema = (options?: {
         .string()
         .or(z.array(z.string()))
         .default(options?.hotkey ?? []),
+      leaderSequence: z
+        .string()
+        .or(z.array(z.string()))
+        .default(options?.leaderSequence ?? []),
       showInCommandPalette: z.boolean().default(options?.showInCommandPalette ?? true),
       disabled: z.boolean().default(options?.disabled ?? false),
     })
@@ -57,6 +62,7 @@ export const configSchema = z
   .object({
     editConfigUrl: z.string().optional(),
     defaultMode: z.enum(modeList).default('google'),
+    leaderKey: z.string().default(':'),
 
     columns: z
       .object({

@@ -1,19 +1,16 @@
-import { FC, useMemo, useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { FC, useCallback, useMemo } from 'react';
 
-import { hotkeyHookConfig } from '#configs/reactHotkeyHookConfig';
 import { useDashboardContext } from '#contexts/DashboardContext';
 import { useAppSelector } from '#hooks/reduxHooks';
 import { Suggestion } from '#types/suggestionType';
-import SuggestionList, { SuggestionListRef } from '#ui/SuggestionList';
+import SuggestionList from '#ui/SuggestionList';
+import { ModifiersOnlyEvent } from '#utils/modifiers';
 import { openUrl } from '#utils/openUrl';
 
 const LinkSuggestions: FC = () => {
   const query = useDashboardContext((ctx) => ctx.query);
 
   const { config } = useAppSelector((state) => state.config);
-
-  const suggestionListRef = useRef<SuggestionListRef>(null);
 
   const links = useMemo(
     () => config.categories.flatMap((category) => category.links),
@@ -41,21 +38,19 @@ const LinkSuggestions: FC = () => {
     }));
   }, [links, query]);
 
-  useHotkeys(
-    'Enter',
-    (e) => {
-      const suggestion = suggestionListRef.current?.currentSuggestion;
-      if (suggestion || !query) return;
+  const handleEnterQuery = useCallback(
+    (e: ModifiersOnlyEvent) => {
+      if (!query) return;
 
       const links = config.categories.flatMap((category) => category.links);
       const foundLink = links.find((link) => link.alias === query.trim());
       if (!foundLink) return;
       openUrl(foundLink.url, e.ctrlKey);
     },
-    { ...hotkeyHookConfig, scopes: 'suggestions', ignoreModifiers: true },
+    [config.categories, query],
   );
 
-  return <SuggestionList suggestions={suggestions} ref={suggestionListRef} />;
+  return <SuggestionList suggestions={suggestions} onEnterWithoutSuggestion={handleEnterQuery} />;
 };
 
 export default LinkSuggestions;
