@@ -1,39 +1,98 @@
+# -----------------------------------------------------------------------------
+# Nerd Startpage — config.yaml
+#
+# Важно:
+# - Если поле/секция ОТСУТСТВУЕТ — применяется значение по умолчанию из схемы.
+# - Если секция есть, но внутри нет полей — для полей тоже применятся дефолты.
+# - В некоторых полях дефолты отличаются от дефолтов секции. Перезаписанные
+#   дефолты указаны в комментариях
+# - Чтобы переопределить дефолт: раскомментируй строку и задай своё значение.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# columns — параметры сетки категорий/колонок
+#
+# Опции сетки:
+#   gap — расстояние между колонками       (default: 24)
+#   width — ширина колонки                 (default: 200)
+#   maxCount — максимум колонок на экране  (default: 6)
+# -----------------------------------------------------------------------------
 columns:
-  gap: 24
-  width: 220
-  maxCount: 6
+  # gap: 24
+  # width: 200
+  # maxCount: 6
 
-defaultMode: google
+# -----------------------------------------------------------------------------
+# defaultMode — режим по умолчанию
+# Доступные значения — это ключи в секции modes: google|yandex|npm|history|...
+# -----------------------------------------------------------------------------
+# defaultMode: google
 
-leaderKey: ':'
+# -----------------------------------------------------------------------------
+# leaderKey — “лидер-клавиша” для leaderSequence
+# Пример: leaderKey=":" и leaderSequence="ip" → вводишь ":ip"
+# -----------------------------------------------------------------------------
+# leaderKey: ':'
 
+# -----------------------------------------------------------------------------
+# editConfigUrl — URL для редактирования конфига
+# -----------------------------------------------------------------------------
+# editConfigUrl: ""
+
+# -----------------------------------------------------------------------------
+# modes — режимы (каждый режим имеет один и тот же набор опций)
+#
+# Доступные режимы: google, yandex, npm, history, bookmarks, sessions, links,
+# commandPalette
+#
+# Опции режима:
+#   hotkey: string | string[]                (default: [])
+#   leaderSequence: string | string[]        (default: [])
+#   showInCommandPalette: boolean            (default: true)
+#   disabled: boolean                        (default: false)
+# -----------------------------------------------------------------------------
 modes:
   google:
-    hotkey: ['ctrl+g']
+    # hotkey: 'ctrl+g'
   yandex:
-    hotkey: ['ctrl+y']
+    # hotkey: 'ctrl+y'
   npm:
+    # showInCommandPalette: false
   history:
-    hotkey: ['ctrl+h']
+    # hotkey: 'ctrl+h'
   bookmarks:
-    hotkey: ['ctrl+b']
+    # hotkey: 'ctrl+b'
   sessions:
-    hotkey: ['ctrl+s']
+    # hotkey: 'ctrl+s'
   links:
-    hotkey: ['ctrl+f']
+    # hotkey: 'ctrl+f'
   commandPalette:
-    hotkey: ['ctrl+p']
+    # showInCommandPalette: false
+    # hotkey: 'ctrl+p'
 
+# -----------------------------------------------------------------------------
+# commands — команды (каждый режим имеет один и тот же набор опций)
+#
+# Доступные команды: nextSuggestion, prevSuggestion, clearInput,
+# openLinkFromClipboard, openGoogle, openYandex, searchOnGoogleFromClipboard,
+# searchOnYandexFromClipboard, editConfig, showConfig, reloadConfig,
+# setConfigUrlFromClipboard, showMyIP
+#
+# Опции режима:
+#   hotkey: string | string[]                (default: [])
+#   leaderSequence: string | string[]        (default: [])
+#   showInCommandPalette: boolean            (default: true)
+#   disabled: boolean                        (default: false)
+# -----------------------------------------------------------------------------
 commands:
   nextSuggestion:
-    hotkey: ['ArrowDown']
+    # hotkey: 'ArrowDown'
     # showInCommandPalette: false
-    # disabled: false
   prevSuggestion:
-    hotkey: ['ArrowUp']
+    # hotkey: 'ArrowUp'
     # showInCommandPalette: false
   clearInput:
-    hotkey: ['ctrl+l']
+    # hotkey: 'ctrl+l'
     # showInCommandPalette: false
   openLinkFromClipboard:
   openGoogle:
@@ -47,6 +106,19 @@ commands:
   showMyIP:
     leaderSequence: 'ip'
 
+# -----------------------------------------------------------------------------
+# categories — список категорий с ссылками (default: [])
+#
+# Структура:
+# categories:
+#   - name: string
+#     color: white|red|orange|yellow|green|lightGreen|lightBlue|blue|violet|pink
+#     links:
+#       - name: string
+#         icon: optional string
+#         url: валидный URL
+#         alias: optional string (короткий алиас)
+# -----------------------------------------------------------------------------
 categories:
   - name:  About_Project
     links:
