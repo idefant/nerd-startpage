@@ -32,8 +32,8 @@ Nerd Startpage - стартовая страница браузера для н�
 
 ## Установка
 
-- для [Firefox](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-*.xpi`)
-- для [Chrome](https://github.com/idefant/nerd-startpage/releases/latest) (`chrome-*.zip`)
+- для [Firefox](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-firefox-*.xpi`)
+- для [Chrome](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-chrome-*.zip`)
 
 ## Использование
 
@@ -110,6 +110,8 @@ task set-manifest-chrome
 # Сборка проекта
 npm run build
 ```
+
+Результат в папке `./dist`
 
 ## Разработка
 
