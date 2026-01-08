@@ -1,14 +1,31 @@
+import fs from 'fs/promises';
 import path from 'path';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 
+const manifestPlugin = (target: 'chrome' | 'firefox'): Plugin => ({
+  name: 'emit-manifest',
+  apply: 'build',
+  async generateBundle() {
+    const p = path.resolve(__dirname, `manifest.${target}.json`);
+    const json = await fs.readFile(p, 'utf8');
+    this.emitFile({
+      type: 'asset',
+      fileName: 'manifest.json',
+      source: json,
+    });
+  },
+});
+
 export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
+  const target = (process.env.TARGET as 'chrome' | 'firefox') || 'chrome';
 
   return {
+    cacheDir: `.vite-${target}`,
     server: {
       open: true,
     },
@@ -29,7 +46,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      outDir: 'dist',
+      outDir: `dist-${target}`,
       emptyOutDir: true,
     },
     esbuild: {
@@ -75,6 +92,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       svgr({ include: '**/*.svg?react', exclude: '' }),
+      manifestPlugin(target),
     ],
   };
 });

@@ -9,8 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
-dist-ssr
+dist-*
 build
+build-*
 *.local
 vite.config.js
 vite.config.d.ts

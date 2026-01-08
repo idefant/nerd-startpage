@@ -13,7 +13,10 @@ src/types/exrates-api-schema.d.ts
 
 # production
 /dist
+/dist-*
 /dev-dist
+/build
+/build-*
 
 # misc
 .DS_Store

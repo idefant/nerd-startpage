@@ -5,32 +5,30 @@ output: prefixed
 tasks:
   dev-firefox:
     desc: Запуск в режиме разработки (Firefox)
-    deps: [set-manifest-firefox, dev-frontend, run-firefox]
+    env:
+      TARGET: firefox
+    cmds:
+      - cmd: npm run dev:once
+      - cmd: npx concurrently -k -n vite,webext "npm run dev:watch -- --emptyOutDir false" "npx web-ext run --source-dir=dist-firefox --firefox=firefox"
 
   dev-chrome:
     desc: Запуск в режиме разработки (Chrome/Chromium)
-    deps: [set-manifest-chrome, dev-frontend, run-chrome]
+    env:
+      TARGET: chrome
+    cmds:
+      - cmd: npm run dev:once
+      - cmd: npx concurrently -k -n vite,webext "npm run dev:watch -- --emptyOutDir false" "npx web-ext run --source-dir=dist-chrome --target=chromium"
 
-  set-manifest-firefox:
-    desc: Копирование манифеста для Firefox
-    cmd: node scripts/set-manifest.mjs firefox
+  build-firefox:
+    desc: Сборка для production (Firefox)
+    env:
+      TARGET: firefox
+    cmds:
+      - cmd: npm run build
 
-  set-manifest-chrome:
-    desc: Копирование манифеста для Chrome
-    cmd: node scripts/set-manifest.mjs chrome
-
-  dev-frontend:
-    desc: Запуск фронтенда в режиме разработки
-    cmd: npm run dev
-
-  dev-storybook:
-    desc: Запуск Storybook в режиме разработки
-    cmd: npm run storybook
-
-  run-firefox:
-    desc: Run Firefox via web-ext
-    cmd: npx web-ext run --source-dir=dist --firefox=firefox
-
-  run-chrome:
-    desc: Run Chromium via web-ext
-    cmd: npx web-ext run --source-dir=dist --target=chromium
+  build-chrome:
+    desc: Сборка для production (Chrome/Chromium)
+    env:
+      TARGET: chrome
+    cmds:
+      - cmd: npm run build

@@ -6,6 +6,9 @@
 *.svg
 /node_modules
 /dist
+/dist-*
 /dev-dist
+/build
+/build-*
 /.vscode
 /nginx
