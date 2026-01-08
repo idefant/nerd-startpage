@@ -4,8 +4,8 @@
   "version": "0.4.1",
   "type": "module",
   "scripts": {
-    "dev:watch": "vite build --watch --mode development",
-    "dev:once": "vite build --mode development",
+    "dev:watch": "vite build --watch --mode development -c vite.config.ts",
+    "dev:once": "vite build --mode development -c vite.config.ts",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint -c .eslintrc.json --ext .js,.jsx,.ts,.tsx src",

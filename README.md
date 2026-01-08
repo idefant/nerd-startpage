@@ -90,7 +90,7 @@ task build-firefox
 web-ext build -s dist-firefox
 
 # Сборка и отправка на подпись в Mozilla
-npx web-ext sign \
+web-ext sign \
   --api-key=$AMO_JWT_ISSUER \
   --api-secret=$AMO_JWT_SECRET \
   --channel=unlisted \
