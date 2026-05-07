@@ -8,8 +8,16 @@ import { useModes } from './useModes';
 export const useModeHotkey = (modeName: ModeName, callback: HotkeyCallback) => {
   const { detailedModesMap } = useModes();
 
-  useHotkeys(detailedModesMap[modeName].hotkey, callback, {
+  const detailedMode = detailedModesMap[modeName];
+
+  const isEnabled = (() => {
+    if (detailedMode.disabled) return false;
+    if (Array.isArray(detailedMode.hotkey)) return detailedMode.hotkey.length > 0;
+    return detailedMode.hotkey.trim().length > 0;
+  })();
+
+  useHotkeys(detailedMode.hotkey, callback, {
     ...hotkeyHookConfig,
-    enabled: !detailedModesMap[modeName].disabled,
+    enabled: isEnabled,
   });
 };

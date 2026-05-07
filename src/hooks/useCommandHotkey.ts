@@ -13,9 +13,17 @@ export const useCommandHotkey = (
 ) => {
   const { detailedCommandsMap } = useCommands();
 
-  useHotkeys(detailedCommandsMap[commandName].hotkey, callback, {
+  const detailedCommand = detailedCommandsMap[commandName];
+
+  const isEnabled = (() => {
+    if (detailedCommand.disabled) return false;
+    if (Array.isArray(detailedCommand.hotkey)) return detailedCommand.hotkey.length > 0;
+    return detailedCommand.hotkey.trim().length > 0;
+  })();
+
+  useHotkeys(detailedCommand.hotkey, callback, {
     ...hotkeyHookConfig,
-    enabled: !detailedCommandsMap[commandName].disabled,
+    enabled: isEnabled,
     ...options,
   });
 };
