@@ -73,14 +73,14 @@ modes:
     # hotkey: 'ctrl+p'
 
 # -----------------------------------------------------------------------------
-# commands — команды (каждый режим имеет один и тот же набор опций)
+# commands — команды (каждый команда имеет один и тот же набор опций)
 #
 # Доступные команды: nextSuggestion, prevSuggestion, clearInput,
 # openLinkFromClipboard, openGoogle, openYandex, searchOnGoogleFromClipboard,
 # searchOnYandexFromClipboard, editConfig, showConfig, reloadConfig,
 # setConfigUrlFromClipboard, showMyIP
 #
-# Опции режима:
+# Опции команд:
 #   hotkey: string | string[]                (default: [])
 #   leaderSequence: string | string[]        (default: [])
 #   showInCommandPalette: boolean            (default: true)

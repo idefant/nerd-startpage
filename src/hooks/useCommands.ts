@@ -10,11 +10,13 @@ export const useCommands = () => {
 
   const detailedCommands = useMemo(
     () =>
-      commandNameList.map((commandName) => ({
-        key: commandName,
-        ...commandsMap[commandName],
-        ...config.commands[commandName],
-      })),
+      commandNameList
+        .map((commandName) => ({
+          key: commandName,
+          ...commandsMap[commandName],
+          ...config.commands[commandName],
+        }))
+        .filter((mode) => !mode.disabled),
     [config.commands],
   );
 
