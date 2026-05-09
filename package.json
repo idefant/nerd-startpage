@@ -13,6 +13,7 @@
     "lint:css": "npx stylelint \"**/*.(s)?css\"",
     "lint:css:fix": "npm run lint:css -- --fix",
     "format": "prettier --write \"**/*.+(js|jsx|ts|tsx|json)\"",
+    "version": "node scripts/bump-manifests.mjs && git add manifest.chrome.json manifest.firefox.json",
     "prepare": "cd .. && husky frontend/.husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

@@ -8,3 +8,4 @@ src/types/exrates-api-schema.d.ts
 src/types/main-api-schema.d.ts
 jest.config.cjs
 .claude
+scripts
