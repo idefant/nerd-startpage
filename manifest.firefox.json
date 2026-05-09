@@ -1,9 +1,15 @@
 {
   "name": "Nerd Startpage",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "manifest_version": 3,
   "description": "Lightweight and fast new tab page extension",
-  "permissions": ["tabs", "history", "bookmarks", "sessions", "clipboardRead"],
+  "permissions": [
+    "tabs",
+    "history",
+    "bookmarks",
+    "sessions",
+    "clipboardRead"
+  ],
   "host_permissions": [
     "https://suggestqueries.google.com/complete/search",
     "https://ya.ru/suggest/suggest-ya.cgi",
@@ -17,7 +23,9 @@
     "newtab": "load.html"
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "type": "module"
   },
   "commands": {
