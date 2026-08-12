@@ -1,19 +1,25 @@
 import punycode from 'punycode/';
-import { decode } from 'urlencode';
+
+type DecodeHumanOptions = {
+  plusAsSpace?: boolean;
+};
+
+function decodeHuman(value: string, { plusAsSpace = false }: DecodeHumanOptions = {}): string {
+  const input = plusAsSpace ? value.replace(/\+/g, ' ') : value;
+
+  try {
+    return decodeURIComponent(input);
+  } catch (error) {
+    return input;
+  }
+}
 
 function decodePathname(pathname: string): string {
   // decodeURIComponent не трогает '+', а в path обычно его и не бывает.
   // Декодируем сегменты, чтобы аккуратно переживать странные случаи.
   return pathname
     .split('/')
-    .map((seg) => {
-      try {
-        return decodeURIComponent(seg);
-      } catch {
-        // если сегмент битый (невалидные %), оставим как есть
-        return seg;
-      }
-    })
+    .map((seg) => decodeHuman(seg))
     .join('/');
 }
 
@@ -31,9 +37,8 @@ function decodeQuery(search: string): string {
     const rawKey = hasEq ? pair.slice(0, eqIdx) : pair;
     const rawVal = hasEq ? pair.slice(eqIdx + 1) : '';
 
-    // urlencode.decode: декодирует %xx и превращает '+' в пробел
-    const key = decode(rawKey);
-    const val = hasEq ? decode(rawVal) : '';
+    const key = decodeHuman(rawKey, { plusAsSpace: true });
+    const val = hasEq ? decodeHuman(rawVal, { plusAsSpace: true }) : '';
 
     return hasEq ? `${key}=${val}` : key;
   });
@@ -45,8 +50,8 @@ function decodeHash(hash: string): string {
   if (!hash) return '';
   const raw = hash.slice(1);
 
-  // Иногда люди пихают в hash query-формат с '+', так что используем urlencode
-  return decode(raw);
+  // Иногда люди пихают в hash query-формат с '+'.
+  return decodeHuman(raw, { plusAsSpace: true });
 }
 
 export function decodeUrlHuman(urlStr: string): string {
@@ -59,7 +64,7 @@ export function decodeUrlHuman(urlStr: string): string {
     url = new URL(parseInput);
   } catch {
     // Если совсем не похоже на URL — попробуем просто "человечить" строку
-    const fallback = decode(urlStr);
+    const fallback = decodeHuman(urlStr);
     return fallback;
   }
 
