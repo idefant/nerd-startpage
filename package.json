@@ -1,7 +1,7 @@
 {
   "name": "nerd-startpage",
   "private": true,
-  "version": "0.4.4",
+  "version": "0.4.5",
   "type": "module",
   "scripts": {
     "dev:watch": "vite build --watch --mode development -c vite.config.ts",

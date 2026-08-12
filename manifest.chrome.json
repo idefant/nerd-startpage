@@ -1,6 +1,6 @@
 {
   "name": "Nerd Startpage",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "manifest_version": 3,
   "description": "Lightweight and fast new tab page extension",
   "permissions": [
