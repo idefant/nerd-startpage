@@ -5,6 +5,8 @@ import YAML from 'yaml';
 import { configSchema } from '#schema/configSchema';
 import { removeNullObjectValues } from '#utils/removeNullObjectValues';
 
+import type { IpService } from '#schema/configSchema';
+
 export const mainApi = createApi({
   reducerPath: 'api/main',
   baseQuery: fetchBaseQuery({}),
@@ -62,11 +64,18 @@ export const mainApi = createApi({
         params: { q: query },
       }),
     }),
-    fetchMyIp: builder.query<{ ip: string; country: string; cc: string }, undefined>({
-      query: () => ({
-        url: 'https://api.myip.com',
-        method: 'GET',
-      }),
+    fetchMyIp: builder.query<{ ip: string; country?: string }, { service: IpService }>({
+      query: ({ service }) =>
+        service === 'myip'
+          ? { url: 'https://api.myip.com', method: 'GET' }
+          : {
+              url: 'https://ifconfig.me/ip',
+              method: 'GET',
+              responseHandler: async (response) => {
+                if (!response.ok) return response;
+                return { ip: (await response.text()).trim() };
+              },
+            },
     }),
   }),
 });

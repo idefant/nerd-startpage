@@ -1276,6 +1276,18 @@
                 "boolean",
                 "null"
               ]
+            },
+            "service": {
+              "default": "ifconfig",
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "ifconfig",
+                "myip",
+                null
+              ]
             }
           }
         }

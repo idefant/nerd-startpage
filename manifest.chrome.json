@@ -14,7 +14,8 @@
     "https://suggestqueries.google.com/complete/search",
     "https://ya.ru/suggest/suggest-ya.cgi",
     "https://api.npms.io/",
-    "https://api.myip.com/"
+    "https://api.myip.com/",
+    "https://ifconfig.me/"
   ],
   "action": {
     "default_title": "Nerd Startpage"

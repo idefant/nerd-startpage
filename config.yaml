@@ -108,6 +108,7 @@ commands:
   setConfigUrlFromClipboard:
   showMyIP:
     leaderSequence: 'ip'
+    # service: 'ifconfig'
 
 # -----------------------------------------------------------------------------
 # categories — список категорий с ссылками (default: [])

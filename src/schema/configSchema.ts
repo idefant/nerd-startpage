@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { colorList } from '#data/color';
 
-const genModeCommandSchema = (options?: {
+const genModeCommandObject = (options?: {
   hotkey?: string | string[];
   leaderSequence?: string | string[];
   /** @default true */
@@ -10,20 +10,21 @@ const genModeCommandSchema = (options?: {
   /** @default false */
   disabled?: boolean;
 }) =>
-  z
-    .object({
-      hotkey: z
-        .string()
-        .or(z.array(z.string()))
-        .default(options?.hotkey ?? []),
-      leaderSequence: z
-        .string()
-        .or(z.array(z.string()))
-        .default(options?.leaderSequence ?? []),
-      showInCommandPalette: z.boolean().default(options?.showInCommandPalette ?? true),
-      disabled: z.boolean().default(options?.disabled ?? false),
-    })
-    .prefault({});
+  z.object({
+    hotkey: z
+      .string()
+      .or(z.array(z.string()))
+      .default(options?.hotkey ?? []),
+    leaderSequence: z
+      .string()
+      .or(z.array(z.string()))
+      .default(options?.leaderSequence ?? []),
+    showInCommandPalette: z.boolean().default(options?.showInCommandPalette ?? true),
+    disabled: z.boolean().default(options?.disabled ?? false),
+  });
+
+const genModeCommandSchema = (options?: Parameters<typeof genModeCommandObject>[0]) =>
+  genModeCommandObject(options).prefault({});
 
 export const modesSchema = z
   .object({
@@ -40,6 +41,10 @@ export const modesSchema = z
 
 const modeList = modesSchema.unwrap().keyof().options;
 
+export const ipServiceList = ['ifconfig', 'myip'] as const;
+
+export type IpService = (typeof ipServiceList)[number];
+
 export const commandsSchema = z
   .object({
     nextSuggestion: genModeCommandSchema({ hotkey: 'ArrowDown', showInCommandPalette: false }),
@@ -54,7 +59,9 @@ export const commandsSchema = z
     showConfig: genModeCommandSchema(),
     reloadConfig: genModeCommandSchema(),
     setConfigUrlFromClipboard: genModeCommandSchema(),
-    showMyIP: genModeCommandSchema(),
+    showMyIP: genModeCommandObject()
+      .extend({ service: z.enum(ipServiceList).default('ifconfig') })
+      .prefault({}),
   })
   .prefault({});
 
