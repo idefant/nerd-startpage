@@ -30,6 +30,7 @@ npm run lint:fix
 npm run lint:css           # stylelint **/*.(s)?css
 npm run lint:css:fix
 npm run format             # prettier
+npm run schema             # regenerate config.schema.json from the zod schema
 npm run storybook          # Storybook on :6006
 ```
 
@@ -59,7 +60,10 @@ Pipeline:
 2. `mainApi.fetchConfig` (RTK Query) fetches the URL, parses YAML, strips null values (`removeNullObjectValues`), and runs it through `configSchema` (Zod). Validation failures `toast.error` and abort — **the existing config is preserved**.
 3. On success, `configSlice.extraReducers` writes `payload` to `state.config.config`. All UI reads from this slice via `useAppSelector`.
 
-The schema in `src/schema/configSchema.ts` is the source of truth for valid mode/command names, defaults, and the shape consumed downstream. `src/data/mode.ts` and `src/data/command.ts` derive `modeNameList` / `commandNameList` from `modesSchema.unwrap().keyof().options` so they cannot drift from the schema. **When adding a new mode or command, edit the schema first**, then add metadata (title/icon) to the corresponding `*.ts` in `src/data/`, then a hook (for commands) or a `*Suggestions` component (for modes), and finally wire it into `DashboardPage.tsx`.
+The schema in `src/schema/configSchema.ts` is the source of truth for valid mode/command names, defaults, and the shape consumed downstream. `src/data/mode.ts` and `src/data/command.ts` derive `modeNameList` / `commandNameList` from `modesSchema.unwrap().keyof().options` so they cannot drift from the schema. **When adding a new mode or command, edit the schema first**, then add metadata (title/icon) to the corresponding `*.ts` in `src/data/`, then a hook (for commands) or a `*Suggestions` component (for modes), and finally wire it into `DashboardPage.tsx`. Also run `npm run schema` — `config.schema.json`
+(the JSON Schema that gives `config.yaml` autocomplete in editors) is generated from
+`configSchema` by `scripts/generate-config-schema.mjs` and must be regenerated whenever the zod
+schema changes.
 
 ### Mode vs command
 

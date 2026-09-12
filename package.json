@@ -12,6 +12,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "npx stylelint \"**/*.(s)?css\"",
     "lint:css:fix": "npm run lint:css -- --fix",
+    "schema": "node scripts/generate-config-schema.mjs",
     "format": "prettier --write \"**/*.+(js|jsx|ts|tsx|json)\"",
     "version": "node scripts/bump-manifests.mjs && git add manifest.chrome.json manifest.firefox.json",
     "prepare": "cd .. && husky frontend/.husky",

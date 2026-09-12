@@ -1,4 +1,5 @@
 # prettier-ignore
+# yaml-language-server: $schema=https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.schema.json
 
 # -----------------------------------------------------------------------------
 # Nerd Startpage — config.yaml

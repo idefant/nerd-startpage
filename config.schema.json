@@ -1,0 +1,1354 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.schema.json",
+  "title": "Nerd Startpage config",
+  "default": {},
+  "type": "object",
+  "properties": {
+    "editConfigUrl": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "defaultMode": {
+      "default": "google",
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "google",
+        "yandex",
+        "npm",
+        "history",
+        "bookmarks",
+        "sessions",
+        "links",
+        "commandPalette",
+        null
+      ]
+    },
+    "leaderKey": {
+      "default": ":",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "columns": {
+      "default": {},
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "gap": {
+          "default": 24,
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "width": {
+          "default": 200,
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "maxCount": {
+          "default": 6,
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      }
+    },
+    "modes": {
+      "default": {},
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "google": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+g",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "yandex": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+y",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "npm": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "history": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+h",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "bookmarks": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+b",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "sessions": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+s",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "links": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+f",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "commandPalette": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+p",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "commands": {
+      "default": {},
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "nextSuggestion": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ArrowDown",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "prevSuggestion": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ArrowUp",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "clearInput": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": "ctrl+l",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "openLinkFromClipboard": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "openGoogle": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "openYandex": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "searchOnGoogleFromClipboard": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "searchOnYandexFromClipboard": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "editConfig": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "showConfig": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "reloadConfig": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "setConfigUrlFromClipboard": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "showMyIP": {
+          "default": {},
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "hotkey": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "leaderSequence": {
+              "default": [],
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "showInCommandPalette": {
+              "default": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "categories": {
+      "default": [],
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "white",
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "lightGreen",
+              "lightBlue",
+              "blue",
+              "violet",
+              "pink",
+              null
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "alias": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "links"
+        ]
+      }
+    }
+  }
+}

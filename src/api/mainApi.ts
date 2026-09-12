@@ -19,7 +19,7 @@ export const mainApi = createApi({
 
           const text = await response.text();
           try {
-            const parsedConfig = removeNullObjectValues(YAML.parse(text));
+            const parsedConfig = removeNullObjectValues(YAML.parse(text) ?? {});
             const validationResult = await configSchema.safeParseAsync(parsedConfig);
             if (validationResult.error) {
               toast.error('Ошибка в конфигурации. Смотри в консоль');
