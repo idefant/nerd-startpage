@@ -1,5 +1,5 @@
 import { maxBy, minBy } from 'lodash-es';
-import { RefObject, useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import { RefObject, useCallback, useLayoutEffect, useState } from 'react';
 
 type ElemCoords = { index: number; width: number; height: number; top: number; left: number };
 
@@ -10,9 +10,10 @@ export const useMasonry = (
     columnGap: number;
     columnMaxCount: number;
     containerRef: RefObject<HTMLElement | null>;
+    itemsCount: number;
   },
 ) => {
-  const { columnWidth, columnGap, columnMaxCount, containerRef } = options;
+  const { columnWidth, columnGap, columnMaxCount, containerRef, itemsCount } = options;
 
   const [elemsListSize, setElemsListSize] = useState<{ width: number; height: number }>();
   const [elemsCoords, setElemsCoords] = useState<ElemCoords[]>([]);
@@ -20,13 +21,10 @@ export const useMasonry = (
   const roCallback = useCallback(() => {
     if (itemsRef.current.length === 0 || !containerRef.current) return;
 
-    const elems = itemsRef.current.filter((elem): elem is HTMLElement => !!elem);
-
-    const elemsSizes = elems.map((elem, i) => ({
-      index: i,
-      width: elem.offsetWidth,
-      height: elem.offsetHeight,
-    }));
+    const elemsSizes = itemsRef.current.flatMap((elem, i) => {
+      if (!elem) return [];
+      return [{ index: i, width: elem.offsetWidth, height: elem.offsetHeight }];
+    });
 
     const containerWidth = containerRef.current.offsetWidth;
     const columnPotentialCount = Math.floor(
@@ -66,13 +64,14 @@ export const useMasonry = (
     setElemsCoords(elemsCoords);
   }, [columnGap, columnMaxCount, columnWidth, containerRef, itemsRef]);
 
-  const ro = useMemo(() => new ResizeObserver(roCallback), [roCallback]);
-
   useLayoutEffect(() => {
+    const ro = new ResizeObserver(roCallback);
     const elems = itemsRef.current.filter((elem): elem is HTMLElement => !!elem);
     elems.forEach((elem) => ro.observe(elem));
+    roCallback();
     return () => ro.disconnect();
-  }, [itemsRef, ro]);
+    // itemsCount is required to re-observe elements added/removed on config reload
+  }, [itemsRef, itemsCount, roCallback]);
 
   useLayoutEffect(() => {
     window.addEventListener('resize', roCallback);
