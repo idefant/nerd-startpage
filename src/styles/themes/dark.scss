@@ -1,7 +1,14 @@
 :root {
+  // background
   --bg: #2e2e2e;
   --bg-paper: #222;
-  --primary-color:     oklch(86% 0.053 95.62deg);
+
+  // text color
+  --primary-text:     oklch(86% 0.053 95.62deg);
+  --secondary-text:    oklch(64.857% 0.035 95.588deg);
+
+  // card colors
+  --primary-color:     var(--primary-text);
   --red-color:         oklch(86% 0.053 0deg);
   --orange-color:      oklch(86% 0.053 75.44deg);
   --yellow-color:      oklch(86% 0.053 105.31deg);
