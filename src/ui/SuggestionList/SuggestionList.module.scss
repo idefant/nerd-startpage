@@ -1,0 +1,88 @@
+.suggestions {
+  display: none;
+  position: absolute;
+  background-color: var(--bg-paper);
+  width: 100%;
+  border: 3px solid var(--primary-color);
+  border-top: none;
+  box-sizing: border-box;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+
+  &Visible {
+    display: block;
+  }
+
+  &:has(.spinner) {
+    min-height: 50px;
+  }
+}
+
+.suggestionsBackdrop {
+  position: absolute;
+  inset: 0;
+  background: #20202080;
+}
+
+.spinnerContainer {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.spinner {
+  margin: 10px auto;
+}
+
+.suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: transparent;
+  width: 100%;
+  text-align: left;
+  border: none;
+  padding: 7px 12px;
+  cursor: pointer;
+
+  &Title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &Extra {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--secondary-text);
+    font-size: 13px;
+  }
+
+  &Active {
+    background-color: var(--primary-color) !important;
+    color: var(--bg-paper);
+  }
+
+  &:hover {
+    background-color: var(--transparent-primary-color);
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: #20202037;
+  backdrop-filter: blur(4px);
+  transition: 0.1s opacity;
+  pointer-events: none;
+  opacity: 0;
+
+  &Visible {
+    opacity: 1;
+    pointer-events: unset;
+  }
+}

@@ -36,5 +36,6 @@
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "eslint.workingDirectories": ["frontend", "backend"]
+  "eslint.workingDirectories": ["frontend", "backend"],
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }

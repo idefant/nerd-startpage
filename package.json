@@ -1,18 +1,20 @@
 {
   "name": "nerd-startpage",
   "private": true,
-  "version": "0.3.4",
+  "version": "0.4.7",
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch --mode development",
-    "firefox": "web-ext run --source-dir=dist --firefox=firefox",
+    "dev:watch": "vite build --watch --mode development -c vite.config.ts",
+    "dev:once": "vite build --mode development -c vite.config.ts",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint -c .eslintrc.json --ext .js,.jsx,.ts,.tsx src",
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "npx stylelint \"**/*.(s)?css\"",
     "lint:css:fix": "npm run lint:css -- --fix",
+    "schema": "node scripts/generate-config-schema.mjs",
     "format": "prettier --write \"**/*.+(js|jsx|ts|tsx|json)\"",
+    "version": "node scripts/bump-manifests.mjs && git add manifest.chrome.json manifest.firefox.json",
     "prepare": "cd .. && husky frontend/.husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -20,9 +22,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "classnames": "^2.5.1",
+    "lodash-es": "^4.17.22",
     "merge-refs": "^2.0.0",
     "modern-normalize": "^3.0.1",
     "nanoid": "^5.1.5",
+    "punycode": "^2.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hotkeys-hook": "^5.0.1",
@@ -30,8 +34,10 @@
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
     "tldts": "^7.0.1",
+    "urlencode": "^2.0.0",
+    "use-context-selector": "^2.0.0",
     "yaml": "^2.7.1",
-    "zod": "^3.24.2"
+    "zod": "^4.3.4"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.12",
@@ -42,13 +48,16 @@
     "@storybook/react-vite": "^8.6.12",
     "@storybook/test": "^8.6.12",
     "@types/firefox-webext-browser": "^120.0.4",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.14.1",
+    "@types/punycode": "^2.1.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/webextension-polyfill": "^0.12.3",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.2.1",
     "eslint": "^8.56.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
@@ -71,7 +80,7 @@
     "vite": "^6.2.0",
     "vite-plugin-checker": "^0.9.1",
     "vite-plugin-svgr": "^4.3.0",
-    "web-ext": "^8.5.0",
+    "web-ext": "^9.2.0",
     "webextension-polyfill": "^0.12.0"
   }
 }

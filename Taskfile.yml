@@ -3,18 +3,32 @@ version: '3'
 output: prefixed
 
 tasks:
-  dev:
-    desc: Запуск в режиме разработки
-    deps: [dev-frontend, dev-storybook, dev-firefox]
-
-  dev-frontend:
-    desc: Запуск фронтенда в режиме разработки
-    cmd: npm run dev
-
-  dev-storybook:
-    desc: Запуск Storybook в режиме разработки
-    cmd: npm run storybook
-
   dev-firefox:
-    desc: Запуск Firefox в режиме разработки
-    cmd: npm run firefox
+    desc: Запуск в режиме разработки (Firefox)
+    env:
+      TARGET: firefox
+    cmds:
+      - cmd: npm run dev:once
+      - cmd: npx concurrently -k -n vite,webext "npm run dev:watch -- --emptyOutDir false" "npx web-ext run --source-dir=dist-firefox --firefox=firefox"
+
+  dev-chrome:
+    desc: Запуск в режиме разработки (Chrome/Chromium)
+    env:
+      TARGET: chrome
+    cmds:
+      - cmd: npm run dev:once
+      - cmd: npx concurrently -k -n vite,webext "npm run dev:watch -- --emptyOutDir false" "npx web-ext run --source-dir=dist-chrome --target=chromium"
+
+  build-firefox:
+    desc: Сборка для production (Firefox)
+    env:
+      TARGET: firefox
+    cmds:
+      - cmd: npm run build
+
+  build-chrome:
+    desc: Сборка для production (Chrome/Chromium)
+    env:
+      TARGET: chrome
+    cmds:
+      - cmd: npm run build

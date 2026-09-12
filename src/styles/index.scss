@@ -24,7 +24,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: var(--text-line-height);
-  color: var(--primary-color);
+  color: var(--primary-text);
   background-color: var(--bg);
   width: 100%;
 }
@@ -32,5 +32,5 @@ body {
 input,
 textarea,
 button {
-  color: var(--primary-color);
+  color: var(--primary-text);
 }

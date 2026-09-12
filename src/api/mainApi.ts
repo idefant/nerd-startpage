@@ -3,6 +3,9 @@ import { toast } from 'react-toastify';
 import YAML from 'yaml';
 
 import { configSchema } from '#schema/configSchema';
+import { removeNullObjectValues } from '#utils/removeNullObjectValues';
+
+import type { IpService } from '#schema/configSchema';
 
 export const mainApi = createApi({
   reducerPath: 'api/main',
@@ -18,7 +21,7 @@ export const mainApi = createApi({
 
           const text = await response.text();
           try {
-            const parsedConfig = YAML.parse(text);
+            const parsedConfig = removeNullObjectValues(YAML.parse(text) ?? {});
             const validationResult = await configSchema.safeParseAsync(parsedConfig);
             if (validationResult.error) {
               toast.error('Ошибка в конфигурации. Смотри в консоль');
@@ -61,11 +64,18 @@ export const mainApi = createApi({
         params: { q: query },
       }),
     }),
-    fetchMyIp: builder.query<{ ip: string; country: string; cc: string }, undefined>({
-      query: () => ({
-        url: 'https://api.myip.com',
-        method: 'GET',
-      }),
+    fetchMyIp: builder.query<{ ip: string; country?: string }, { service: IpService }>({
+      query: ({ service }) =>
+        service === 'myip'
+          ? { url: 'https://api.myip.com', method: 'GET' }
+          : {
+              url: 'https://ifconfig.me/ip',
+              method: 'GET',
+              responseHandler: async (response) => {
+                if (!response.ok) return response;
+                return { ip: (await response.text()).trim() };
+              },
+            },
     }),
   }),
 });

@@ -1,16 +1,19 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { mainApi } from '#api/mainApi';
+import { defaultConfig } from '#configs/defaultConfig';
 import { Config } from '#types/configType';
 
-type ConfigState = {
+export type ConfigState = {
   configUrl?: string;
-  config?: Config;
+  config: Config;
+  wasResetDueToInvalidConfig: boolean;
 };
 
 const initialState: ConfigState = {
   configUrl: undefined,
-  config: undefined,
+  config: defaultConfig,
+  wasResetDueToInvalidConfig: false,
 };
 
 export const configSlice = createSlice({
@@ -19,6 +22,9 @@ export const configSlice = createSlice({
   reducers: {
     setConfigUrl(state, { payload }: PayloadAction<string>) {
       state.configUrl = payload;
+    },
+    clearWasResetDueToInvalidConfig(state) {
+      state.wasResetDueToInvalidConfig = false;
     },
   },
   extraReducers: (builder) => {
@@ -29,6 +35,6 @@ export const configSlice = createSlice({
   },
 });
 
-export const { setConfigUrl } = configSlice.actions;
+export const { setConfigUrl, clearWasResetDueToInvalidConfig } = configSlice.actions;
 
 export const configReducer = configSlice.reducer;

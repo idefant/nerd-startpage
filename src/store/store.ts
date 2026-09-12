@@ -1,15 +1,36 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
+import { PersistConfig, PersistedState, persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { mainApi } from '#api/mainApi';
+import { defaultConfig } from '#configs/defaultConfig';
+import { configSchema } from '#schema/configSchema';
 
-import { configReducer } from './reducers/configSlice';
+import { configReducer, ConfigState } from './reducers/configSlice';
 
-const persistConfig = {
+const CONFIG_PERSIST_VERSION = 1;
+
+const persistConfig: PersistConfig<ConfigState> = {
   key: 'config',
   storage,
+  version: CONFIG_PERSIST_VERSION,
+  migrate: async (state) => {
+    if (!state) return state;
+
+    const persisted = state as PersistedState & { config?: unknown; configUrl?: string };
+    const result = configSchema.safeParse(persisted.config);
+
+    if (!result.success) {
+      return {
+        ...persisted,
+        config: defaultConfig,
+        wasResetDueToInvalidConfig: true,
+      };
+    }
+
+    return { ...persisted, config: result.data };
+  },
 };
 
 export const rootReducer = combineReducers({

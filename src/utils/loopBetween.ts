@@ -1,3 +1,4 @@
+/** Аналог _.clamp. Преобразует любое `value` в число в диапазоне от `min` до `max` */
 export const loopBetween = (min: number, max: number, value: number) => {
   if (min > max) {
     throw new Error('Минимальное число должно быть меньше максимального');

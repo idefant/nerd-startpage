@@ -1,20 +1,25 @@
 # Nerd Startpage
 
-Nerd Startpage - стартовая страница браузера, которая не требует использования мыши.
+Nerd Startpage - стартовая страница браузера для нёрдов.
 
-## Фичи
-
-- Отображение категорий в стиле Masonry
-- Возможность поиска в Google, Yandex, NPM
-- Подсказки от поисковых движков
-- Все конфигурация в YAML-файле
-- Поиск в истории браузера, закладках, списке недавно закрытых вкладок
-- Поиск по сохраненным ссылкам и алиасам на них
-- Палитра команд
+- Минимализм
 - Не требует использования мыши
-- Настраиваемые горячие клавиши
-- Минималистичный
-- Использует Nerd Fonts
+- Подсказки от поисковых движков
+- Вся конфигурация в [YAML-файле](./config.yaml)
+- Настраиваемые горячие клавиши и leader последовательности
+- Поддерживает иконки [Nerd Fonts](https://www.nerdfonts.com/cheat-sheet)
+- Доступно для Firefox и Chrome
+
+## Режимы
+
+- Поиск в Google
+- Поиск в Yandex
+- Поиск в NPM
+- Поиск в истории браузера
+- Поиск в закладках в браузере
+- Недавно закрытые вкладки
+- Поиск по ссылкам и алиасам в Nerd Startpage
+- Палитра команд
 
 ## Галерея
 
@@ -25,19 +30,25 @@ Nerd Startpage - стартовая страница браузера, кото�
   <img src=".github/command-palette.png?raw=true" width="400px" />
 </p>
 
+## Установка
+
+- для [Firefox](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-firefox-*.xpi`)
+- для [Chrome](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-chrome-*.zip`)
+
 ## Использование
 
-1. Установите расширение для [Firefox](https://github.com/idefant/nerd-startpage/releases/latest) (`nerd-startpage-*.xpi`)
-2. Скачайте [config file](config.yaml)
-3. Замените данные на свои
-4. Опубликуйте `config.yaml` на Github Gist, Pastebin или любой другой платформе, где можно получить ссылку на `raw` формат.
-5. Скопируйте ссылку на `raw` формат (Для примера: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
-6. Нажмите комбинацию `Alt + T`, чтобы открыть Nerd Startpage
-7. Нажмите комбинацию `CTrl + P`, чтобы открыть палитру команд
-8. Выберите команду `Set config URL from clipboard`
-9. Перезагрузите конфиг командой `Reload config`
+1. Скачайте [config.yaml](./config.yaml)
+2. Ознакомьтесь с документацией внутри `config.yaml` и настройте Nerd Startpage под себя, раскомментировав необходимые строки
+3. Опубликуйте `config.yaml` на Github Gist, Pastebin или любой другой платформе, где можно получить ссылку на `raw` формат
+4. Скопируйте ссылку на `raw` формат (Для примера: https://raw.githubusercontent.com/idefant/nerd-startpage/main/config.yaml)
+5. Нажмите комбинацию `Alt + T`, чтобы открыть Nerd Startpage
+6. Откройте палитру команд с помощью `Ctrl + P`
+7. Выберите команду `Set config URL from clipboard`
+8. После обновления конфига подтягивайте изменения командой `Reload config`
 
-## Горячие клавиши по умолчанию
+## Горячие клавиши
+
+### Горячие клавиши по умолчанию
 
 | Название                           | Комбинация |
 | ---------------------------------- | ---------- |
@@ -50,37 +61,50 @@ Nerd Startpage - стартовая страница браузера, кото�
 | Поиск по недавно закрытым вкладкам | `Ctrl + S` |
 | Поиск по ссылкам и алиасам         | `Ctrl + F` |
 | Очистить поле ввода                | `Ctrl + L` |
-| Открыть ссылку из буфера обмена    | `Ctrl + O` |
 
 ### Навигация по подсказкам
 
-| Название                         | Комбинация     |
-| -------------------------------- | -------------- |
-| Предыдущая подсказка             | `Arrow Up`     |
-| Следующая подсказка              | `Arrow Down`   |
-| Скрыть/показать панель подсказок | `Escape`       |
-| Открыть ссылку в текущей вкладке | `Enter`        |
-| Открыть ссылку в новой вкладке   | `Ctrl + Enter` |
+| Название                                                                    | Комбинация           |
+| --------------------------------------------------------------------------- | -------------------- |
+| Предыдущая подсказка                                                        | `Arrow Up`           |
+| Следующая подсказка                                                         | `Arrow Down`         |
+| Скрыть/показать панель подсказок                                            | `Escape`             |
+| Открыть ссылку в текущей вкладке                                            | `Enter`              |
+| Открыть ссылку в новой вкладке                                              | `Ctrl + Enter`       |
+| Открыть альтернативный сайт (только NPM -> BundlePhobia)                    | `Alt + Enter`        |
+| Открыть альтернативный сайт в новой вкладке                                 | `Ctrl + Alt + Enter` |
+| Применить подсказку и продолжить ввод (только режимы Google и Yandex)       | `Tab`                |
+| Отредактировать URL подсказки (только режимы поиска по истории и закладкам) | `Ctrl + E`           |
 
-## Продакшн
+## Продакшн сборка
+
+### Firefox
 
 Mozilla [Developer Hub](https://addons.mozilla.org/en-US/developers/)
 
 ```sh
 # Сборка проекта
-npm run build
+task build-firefox
 
 # Сборка расширения в zip - только для тестирования в качестве временного расширения на about:debugging#/runtime/this-firefox
-web-ext build -s dist
+web-ext build -s dist-firefox
 
 # Сборка и отправка на подпись в Mozilla
-npx web-ext sign \
+web-ext sign \
   --api-key=$AMO_JWT_ISSUER \
   --api-secret=$AMO_JWT_SECRET \
   --channel=unlisted \
-  --source-dir=dist/ \
-  --artifacts-dir=build/
+  --source-dir=dist-firefox/ \
+  --artifacts-dir=build-firefox/
 ```
+
+### Chrome
+
+```sh
+task build-chrome
+```
+
+Результат в папке `./dist-chrome`
 
 ## Разработка
 
@@ -88,15 +112,21 @@ npx web-ext sign \
 # Установка зависимостей
 npm install
 
-# Запуск в режиме разработки
-npm run dev
-
 # Запуск Firefox для разработки
-npm run firefox
+task dev-firefox
+
+# Запуск Chrome для разработки
+task dev-chrome
 
 # Запуск витрины компонентов в режиме разработки
 npm run storybook
 
-# Запустить все команды разом можно с помощью Taskfile
-task dev
+# Обновление версии
+npm version 1.2.3
 ```
+
+## Технические особенности
+
+### Манифест
+
+Chrome и Firefox требуют манифеста в разных форматах. Необходимый манифест устанавливается автоматически при запуске `task dev-firefox` или `task dev-chrome`.

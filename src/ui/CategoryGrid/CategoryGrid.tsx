@@ -22,10 +22,11 @@ export const CategoryGrid: FC<CategoryGridProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const categoryListRef = useRef<(HTMLDivElement | null)[]>([]);
+  categoryListRef.current.length = categories?.length ?? 0;
 
   const { elemsCoords: categoriesCoords, elemsListSize: categoriesListSize } = useMasonry(
     categoryListRef,
-    { columnWidth, columnGap, columnMaxCount, containerRef },
+    { columnWidth, columnGap, columnMaxCount, containerRef, itemsCount: categories?.length ?? 0 },
   );
 
   return (
@@ -53,7 +54,7 @@ export const CategoryGrid: FC<CategoryGridProps> = ({
             key={i}
           />
         ))}
-      </div>{' '}
+      </div>
     </div>
   );
 };
