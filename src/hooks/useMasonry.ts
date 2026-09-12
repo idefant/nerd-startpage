@@ -56,8 +56,9 @@ export const useMasonry = (
     );
 
     const maxColumn = maxBy(elemsLocations, (column) => column.height);
-    const elemsListWidth = columnsCount * (columnWidth + columnGap) - columnGap;
-    setElemsListSize({ width: elemsListWidth, height: maxColumn?.height || 0 });
+    const elemsListWidth = Math.max(columnsCount * (columnWidth + columnGap) - columnGap, 0);
+    const elemsListHeight = Math.max((maxColumn?.height || 0) - columnGap, 0);
+    setElemsListSize({ width: elemsListWidth, height: elemsListHeight });
 
     const elemsCoords = elemsLocations
       .flatMap((elem) => elem.elems)
